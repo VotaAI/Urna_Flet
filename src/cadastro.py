@@ -1,7 +1,7 @@
 import flet as ft
 
 def main(page: ft.Page):
-    page.title = "Login"
+    page.title = "Cadastrar-se"
     page.vertical_alignment = ft.MainAxisAlignment.CENTER  # Centraliza no eixo Y
     page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
     page.bgcolor = "#303030"
@@ -22,7 +22,7 @@ def main(page: ft.Page):
     subtitulo =ft.Text("Realize o seu papel de votante ou candidato.", size=20, color="#ffffff")
 
     registrar = ft.ElevatedButton(
-        text="Registrar-se", 
+        text="Login", 
         bgcolor="#ffffff", 
         color="#000000", 
         width=380, 
@@ -36,26 +36,43 @@ def main(page: ft.Page):
         content=ft.Column([titulo, subtitulo, registrar], spacing=25, alignment=ft.MainAxisAlignment.CENTER, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
         padding=200,
         col={"xs":6, "md":1, "xl":6},
-        alignment=ft.alignment.center
+        alignment=ft.alignment.center,
+        margin=ft.padding.only(bottom=90)
     )
 
-    email_cpf = ft.Text("Email/CPF", color="#ffffff", size=20)
-    email_cpf_label = ft.TextField(hint_text="Insira seu Email ou CPF", expand=True, height=40, bgcolor="#ffffff", content_padding=10)
+    nome_completo = ft.Text("Nome completo:", color="#ffffff", size=20)
+    nome_completo_label = ft.TextField(hint_text="Insira seu nome completo", expand=True, height=40, bgcolor="#ffffff", content_padding=10)
+    container_nome = ft.Container(
+        content=ft.Column([nome_completo, nome_completo_label], spacing=5)
+    )
 
+    cpf = ft.Text("CPF:", color="#ffffff", size=20)
+    cpf_label = ft.TextField(hint_text="Insira seu CPF", expand=True, height=40, bgcolor="#ffffff", content_padding=10)
+    container_cpf = ft.Container(
+        content=ft.Column([cpf, cpf_label], spacing=5)
+    )
+    
+    email = ft.Text("Email:", color="#ffffff", size=20)
+    email_label = ft.TextField(hint_text="Insira seu email", expand=True, height=40, bgcolor="#ffffff", content_padding=10)
     container_email = ft.Container(
-        content=ft.Column([email_cpf, email_cpf_label], spacing=5)
+        content=ft.Column([email, email_label], spacing=5)
     )
 
-    senha = ft.Text("Senha", color="#ffffff", size=20)
+    senha = ft.Text("Senha:", color="#ffffff", size=20)
     senha_label = ft.TextField(hint_text="Digite sua senha", expand=True, height=40, bgcolor="#ffffff", content_padding=10)
-
     container_senha = ft.Container(
         content=ft.Column([senha, senha_label], spacing=5)
     )
 
+    senha_confirmar = ft.Text("Senha:", color="#ffffff", size=20)
+    senha_confirmar_label = ft.TextField(hint_text="Confirme sua senha", expand=True, height=40, bgcolor="#ffffff", content_padding=10)
+    container_senha_confirmar = ft.Container(
+        content=ft.Column([senha_confirmar, senha_confirmar_label], spacing=5)
+    )
+
     login = ft.Row([
         ft.ElevatedButton(
-            text="Login",
+            text="Registrar",
             bgcolor="#ffffff",
             color="#000000",
             expand=True,
@@ -69,7 +86,7 @@ def main(page: ft.Page):
 
 
     container_labels = ft.Container(
-        content=ft.Column([container_email, container_senha, login], spacing=50),
+        content=ft.Column([container_nome, container_cpf, container_email, container_senha, container_senha_confirmar, login], spacing=50),
         padding=150,
         col={"xs":6, "md":1, "xl":6},
         alignment=ft.alignment.center
