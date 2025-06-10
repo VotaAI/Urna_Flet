@@ -1,8 +1,9 @@
 import flet as ft
-# TODO -> AJEIAR OS ESPAÇAMENTOS, DEIXAR MAIS LIMPO, E VER A QUESTÃO DAS IMAGENS
+# TODO -> AJEIAR OS ESPAÇAMENTOS, DEIXAR MAIS LIMPO, E VER A QUESTÃO DAS IMAGENS (OK)
+# TODO -> QUESTÃO DE CONVERTER IMAGENS EM BASE64
 def main(page: ft.Page):
     page.title = "Vota AÍ"
-    page.theme_mode = ft.ThemeMode.LIGHT
+    page.theme_mode = ft.ThemeMode.LIGHT # trocar modo por aqui
     page.scroll = ft.ScrollMode.AUTO
 
     page.appbar = ft.AppBar(
@@ -17,6 +18,18 @@ def main(page: ft.Page):
         ],
     )
 
+    # ESPAÇAMENTOS
+    espacamento = ft.Container(height=100)  # Espaçamento entre seções
+    espacamento2 = ft.Container(height=20)  # Espaçamento entre seções
+
+    # IMAGENS:
+    imagem_bem_vindo = ft.Image(
+        src=f"/assets/banner_votai.png",
+        width=100,
+        height=100,
+        fit=ft.ImageFit.CONTAIN,
+    )
+
     # CONTAINER INICIAL
     container_inicial = ft.Container(
         content=ft.ResponsiveRow(
@@ -25,30 +38,34 @@ def main(page: ft.Page):
                     content=ft.Column(
                         [
                             ft.Text("Bem-vindo(a) ao VotaAÍ!", size=30, weight=ft.FontWeight.BOLD),
+                            espacamento2,
                             ft.Text(
                                 "Participe como eleitor ou se candidate nas votações que estão ocorrendo no momento",
                                 size=20,
                             ),
-                            ft.OutlinedButton(text="Entrar"),
+                            espacamento2,
+                            ft.OutlinedButton(text="Entrar", width=200),
                         ],
                         alignment=ft.MainAxisAlignment.CENTER,
                         horizontal_alignment=ft.CrossAxisAlignment.CENTER,
                     ),
                     padding=20,
                     bgcolor=ft.Colors.SURFACE,
-                    col={"xs": 12, "md": 6},
+                    alignment=ft.alignment.center,
+
+                    col={"xs": 12, "md": 6, "lg": 5},
                 ),
                 ft.Container(
                     content=ft.Image(
-                        src="https://cdn-icons-png.flaticon.com/512/107/107831.png",
+                        src=f"banner_votai.png",
                         fit=ft.ImageFit.CONTAIN,
                     ),
-                    padding=20,
-                    col={"xs": 12, "md": 6},
-                    alignment=ft.alignment.center,
+                    alignment=ft.alignment.center_right,
+                    expand=True,
+                    col={"xs": 12, "md": 6, "lg": 7},
                 ),
             ],
-            alignment=ft.MainAxisAlignment.CENTER,
+            alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
             vertical_alignment=ft.CrossAxisAlignment.CENTER,
         )
     )
@@ -99,48 +116,67 @@ def main(page: ft.Page):
 
 
     # SOBRE O VOTA AÍ
-    sobre_vota_ai = ft.Container(
-        content=ft.ResponsiveRow(
-            [
-                ft.Container(
-                    content=ft.Image(
-                        src="https://cdn-icons-png.flaticon.com/512/107/107831.png",
-                        fit=ft.ImageFit.CONTAIN,
+    sobre_vota_ai = ft.Column(
+        [
+            ft.Text(
+                "Mas o que é o “VotaAÍ”?",
+                size=30,
+                weight=ft.FontWeight.BOLD,
+                text_align=ft.TextAlign.CENTER,
+            ),
+            ft.ResponsiveRow(
+                [
+                    ft.Container(col={"lg": 3}),
+                    ft.Container(
+                        content=ft.Image(
+                            src="imagem_pessoas.png",
+                            fit=ft.ImageFit.COVER,
+                        ),
+                        col={"xs": 12, "md": 6, "lg": 2},
+                        padding=10,
                     ),
-                    col={"xs": 12, "md": 6},
-                    alignment=ft.alignment.center,
-                    padding=20,
-                ),
-                ft.Container(
-                    content=ft.Column(
-                        [
-                            ft.Text(
-                                "Nosso sistema de votação online foi criado para facilitar e tornar mais transparente a realização de votações em diferentes contextos.",
-                                size=16,
-                            ),
-                            ft.Text(
-                                "Promovemos participação democrática com acessibilidade e segurança.",
-                                size=20,
-                                weight=ft.FontWeight.BOLD,
-                            ),
-                        ],
-                        alignment=ft.MainAxisAlignment.CENTER,
-                        horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                    ft.Container(
+                        content=ft.Column(
+                            [
+                                ft.Text(
+                                    "Nosso sistema de votação online foi criado para facilitar e tornar mais transparente a realização de votações em diferentes contextos — seja em escolas, empresas, comunidades ou projetos.",
+                                    size=18,
+                                    text_align=ft.TextAlign.LEFT,
+                                ),
+                                ft.Text(
+                                    "Nosso objetivo é promover a participação democrática, com transparência, acessibilidade e segurança.",
+                                    size=22,
+                                    weight=ft.FontWeight.BOLD,
+                                    text_align=ft.TextAlign.LEFT,
+                                ),
+                            ],
+                            spacing=20,
+                            alignment=ft.MainAxisAlignment.CENTER,
+                            horizontal_alignment=ft.CrossAxisAlignment.START,
+                        ),
+                        col={"xs": 12, "md": 6, "lg": 4},
+                        padding=10,
                     ),
-                    col={"xs": 12, "md": 6},
-                    padding=20,
-                ),
-            ]
-        )
+                    ft.Container(col={"lg": 3}),
+                ],
+                vertical_alignment=ft.CrossAxisAlignment.CENTER,
+            )
+        ],
+        alignment=ft.MainAxisAlignment.CENTER,
+        horizontal_alignment=ft.CrossAxisAlignment.CENTER,
     )
+
+
 
     # FORMULÁRIO DE CONTATO
     formulario_contato = ft.Container(
         content=ft.Column(
             [
                 ft.Text("Gostaria de Criar suas próprias votações?", size=25, weight=ft.FontWeight.BOLD),
+                espacamento2,
                 ft.Text("Entre em contato conosco para mais informações!", size=14),
                 ft.TextField(label="Seu Email", width=300),
+                espacamento2,
                 ft.FilledButton(text="Quero criar minhas votações!"),
             ],
             alignment=ft.MainAxisAlignment.CENTER,
@@ -154,7 +190,7 @@ def main(page: ft.Page):
         content=ft.Column(
             [
                 ft.Text(
-                    "VotaAÍ - Todos os direitos reservados © 2023",
+                    "VotaAÍ - Todos os direitos reservados © 2025",
                     size=12,
                     color=ft.Colors.ON_SURFACE_VARIANT,
                     text_align=ft.TextAlign.CENTER,
@@ -180,9 +216,13 @@ def main(page: ft.Page):
         ft.Column(
             [
                 container_inicial,
+                espacamento, # Espaçamento entre seções
                 votacoes_atuais,
+                espacamento,
                 sobre_vota_ai,
+                espacamento,
                 formulario_contato,
+                espacamento,
                 footer,
             ],
             expand=True,
