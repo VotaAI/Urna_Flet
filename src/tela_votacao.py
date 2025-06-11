@@ -83,35 +83,73 @@ def main(page: ft.Page):
             [
                 ft.Row(
                                 [
-                                    ft.ElevatedButton(text="1", width=60),
-                                    ft.ElevatedButton(text="2", width=60),
-                                    ft.ElevatedButton(text="3", width=60),
-                                    ft.ElevatedButton(text="NULO", width=80, bgcolor=ft.Colors.RED_400, color=ft.Colors.WHITE),
+                                    ft.FilledButton(text="1", width=60, style=ft.ButtonStyle(
+                                    bgcolor=ft.Colors.ON_SURFACE_VARIANT,  # se adapta bem a temas claros e escuros
+                                    color=ft.Colors.ON_TERTIARY,
+                                    shape=ft.RoundedRectangleBorder(radius=4),  # cantos levemente arredondados (mude para 0 se quiser 100% quadrado)
+                                    ),),
+                                    ft.FilledButton(text="2", width=60, style=ft.ButtonStyle(
+                                    bgcolor=ft.Colors.ON_SURFACE_VARIANT,  # se adapta bem a temas claros e escuros
+                                    color=ft.Colors.ON_TERTIARY,
+                                    shape=ft.RoundedRectangleBorder(radius=4),  # cantos levemente arredondados (mude para 0 se quiser 100% quadrado)
+                                    ),),
+                                    ft.FilledButton(text="3", width=60, style=ft.ButtonStyle(
+                                    bgcolor=ft.Colors.ON_SURFACE_VARIANT,  # se adapta bem a temas claros e escuros
+                                    color=ft.Colors.ON_TERTIARY,
+                                    shape=ft.RoundedRectangleBorder(radius=4),  # cantos levemente arredondados (mude para 0 se quiser 100% quadrado)
+                                    ),),
+                                    ft.FilledButton(text="NULO", width=80, style=ft.ButtonStyle(
+                                    bgcolor=ft.Colors.RED_400,
+                                    color=ft.Colors.WHITE,
+                                    shape=ft.RoundedRectangleBorder(radius=4),  # cantos levemente arredondados (mude para 0 se quiser 100% quadrado)
+                                    ),),
                                 ],
                                 spacing=10,
                                 alignment=ft.alignment.center,
                             ),
                             ft.Row(
                                 [
-                                    ft.ElevatedButton(text="4", width=60),
-                                    ft.ElevatedButton(text="5", width=60),
-                                    ft.ElevatedButton(text="6", width=60),
-                                    ft.ElevatedButton(
-                                        text="VO\nTAR",
-                                        width=80,
-                                        height=80,
-                                        bgcolor=ft.Colors.GREEN_400,
-                                        color=ft.Colors.WHITE,
-                                    ),
+                                    ft.FilledButton(text="4", width=60, style=ft.ButtonStyle(
+                                    bgcolor=ft.Colors.ON_SURFACE_VARIANT,  # se adapta bem a temas claros e escuros
+                                    color=ft.Colors.ON_TERTIARY,
+                                    shape=ft.RoundedRectangleBorder(radius=4),  # cantos levemente arredondados (mude para 0 se quiser 100% quadrado)
+                                    ),),
+                                    ft.FilledButton(text="5", width=60, style=ft.ButtonStyle(
+                                    bgcolor=ft.Colors.ON_SURFACE_VARIANT,  # se adapta bem a temas claros e escuros
+                                    color=ft.Colors.ON_TERTIARY,
+                                    shape=ft.RoundedRectangleBorder(radius=4),  # cantos levemente arredondados (mude para 0 se quiser 100% quadrado)
+                                    ),),
+                                    ft.FilledButton(text="6", width=60, style=ft.ButtonStyle(
+                                    bgcolor=ft.Colors.ON_SURFACE_VARIANT,  # se adapta bem a temas claros e escuros
+                                    color=ft.Colors.ON_TERTIARY,
+                                    shape=ft.RoundedRectangleBorder(radius=4),  # cantos levemente arredondados (mude para 0 se quiser 100% quadrado)
+                                    ),),
+                                    ft.FilledButton(text="VOTAR", width=80, height=80, style=ft.ButtonStyle(
+                                    bgcolor=ft.Colors.GREEN_400,
+                                    color=ft.Colors.WHITE,
+                                    shape=ft.RoundedRectangleBorder(radius=4),  # cantos levemente arredondados (mude para 0 se quiser 100% quadrado)
+                                    ),),
                                 ],
                                 spacing=10,
                                 alignment=ft.alignment.center,
                             ),
                             ft.Row(
                                 [
-                                    ft.ElevatedButton(text="7", width=60),
-                                    ft.ElevatedButton(text="8", width=60),
-                                    ft.ElevatedButton(text="9", width=60),
+                                    ft.FilledButton(text="7", width=60, style=ft.ButtonStyle(
+                                    bgcolor=ft.Colors.ON_SURFACE_VARIANT,  # se adapta bem a temas claros e escuros
+                                    color=ft.Colors.ON_TERTIARY,
+                                    shape=ft.RoundedRectangleBorder(radius=4),  # cantos levemente arredondados (mude para 0 se quiser 100% quadrado)
+                                    ),),
+                                    ft.FilledButton(text="8", width=60, style=ft.ButtonStyle(
+                                    bgcolor=ft.Colors.ON_SURFACE_VARIANT,  # se adapta bem a temas claros e escuros
+                                    color=ft.Colors.ON_TERTIARY,
+                                    shape=ft.RoundedRectangleBorder(radius=4),  # cantos levemente arredondados (mude para 0 se quiser 100% quadrado)
+                                    ),),
+                                    ft.FilledButton(text="9", width=60, style=ft.ButtonStyle(
+                                    bgcolor=ft.Colors.ON_SURFACE_VARIANT,  # se adapta bem a temas claros e escuros
+                                    color=ft.Colors.ON_TERTIARY,
+                                    shape=ft.RoundedRectangleBorder(radius=4),  # cantos levemente arredondados (mude para 0 se quiser 100% quadrado)
+                                    ),),
                                 ],
                                 spacing=10,
                                 alignment=ft.alignment.center,
@@ -119,7 +157,11 @@ def main(page: ft.Page):
                             ft.Row(
                                 [
                                     ft.Container(width=60),  # Espaço vazio para alinhar o 0 centralizado
-                                    ft.ElevatedButton(text="0", width=60),
+                                    ft.FilledButton(text="0", width=60, style=ft.ButtonStyle(
+                                    bgcolor=ft.Colors.ON_SURFACE_VARIANT,  # se adapta bem a temas claros e escuros
+                                    color=ft.Colors.ON_TERTIARY,
+                                    shape=ft.RoundedRectangleBorder(radius=4),  # cantos levemente arredondados (mude para 0 se quiser 100% quadrado)
+                                    ),),
                                 ],
                                 spacing=10,
                                 alignment=ft.alignment.center,
@@ -128,8 +170,6 @@ def main(page: ft.Page):
             alignment=ft.MainAxisAlignment.CENTER,
             horizontal_alignment=ft.CrossAxisAlignment.CENTER,
         ),
-        padding=20,
-        bgcolor=ft.Colors.ON_SURFACE_VARIANT,
         alignment=ft.alignment.center,
     )
 
@@ -137,6 +177,7 @@ def main(page: ft.Page):
     container_area_votacao = ft.Container(
         content=ft.ResponsiveRow(
             [
+                ft.Container(col={"lg": 2, "md": 1, "xs": 1}),
                 ft.Container(
                     content=ft.Column(
                         [
@@ -153,21 +194,23 @@ def main(page: ft.Page):
                                 keyboard_type=ft.KeyboardType.NUMBER,
                                 autofocus=True,
                             ),
+                            espacamento2,
                             teclado,
                             espacamento2,
                         ],
-                        alignment=ft.MainAxisAlignment.CENTER,
-                        horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                        alignment=ft.MainAxisAlignment.START,
+                        horizontal_alignment=ft.CrossAxisAlignment.START,
                     ),
                     padding=20,
                     bgcolor=ft.Colors.SURFACE,
                     alignment=ft.alignment.center,
-                    col={"xs": 12, "md": 12, "lg": 4},
+                    col={"xs": 10, "md": 6, "lg": 4},
                 ),
                 ft.Container(
                     content=candidatos_disponiveis,
-                    col={"xs": 12, "md": 11, "lg": 4},
+                    col={"xs": 12, "md": 12, "lg": 4},
                 ),
+                ft.Container(col={"lg": 2,"md": 3}),
             ],
             alignment=ft.MainAxisAlignment.CENTER,
             vertical_alignment=ft.CrossAxisAlignment.CENTER,
