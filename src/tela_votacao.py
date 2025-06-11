@@ -1,6 +1,6 @@
 import flet as ft
-# TODO -> responsividade, esta etranho a posição do teclado, não sei pq...
-# TODO -> alterar as cores, etc
+# TODO -> responsividade, esta etranho a posição do teclado, não sei pq... (OK)
+# TODO -> alterar as cores, etc (OK)
 def main(page: ft.Page):
     page.title = "Vota AÍ"
     page.theme_mode = ft.ThemeMode.LIGHT # trocar modo por aqui
