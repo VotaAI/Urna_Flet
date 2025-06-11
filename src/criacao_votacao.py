@@ -24,9 +24,17 @@ def main(page: ft.Page):
                     candidatos_card.controls.remove(card_container)
                     candidatos_card.update()
 
-            icone_pessoa = ft.Container(content=ft.CircleAvatar(ft.Icon(name=ft.Icons.PERSON, size=45), radius=25, bgcolor="#3a3a3a"))
+            icone_pessoa = ft.Container(content=ft.CircleAvatar(ft.Icon(name=ft.Icons.PERSON, size=55), radius=30, bgcolor="#3a3a3a"))
 
-            apagar_btn = ft.ElevatedButton(text="Apagar", bgcolor="transparent", on_click=remover_ultimo_candidato, color="#ffffff")
+            apagar_btn = ft.ElevatedButton(text="Apagar", 
+                                        style=ft.ButtonStyle(
+                                            bgcolor="transparent", 
+                                            overlay_color="transparent", 
+                                            shadow_color="transparent", 
+                                            color="#ffffff", 
+                                            elevation=0, 
+                                            text_style=ft.TextStyle(size=20)), 
+                                            on_click=remover_ultimo_candidato)
 
             card_container.content = ft.Row(
                 [
@@ -34,9 +42,9 @@ def main(page: ft.Page):
                         [
                             icone_pessoa,
                             ft.Column([
-                                ft.Text(candidatos_label.value, size=16, color="#ffffff"),
-                                ft.Text(detalhes_label.value, size=12, color="#989898")
-                            ])
+                                ft.Text(candidatos_label.value, size=20, color="#ffffff"),
+                                ft.Text(detalhes_label.value, size=16, color="#989898")
+                            ], spacing=1)
                         ]
                     ),
                     apagar_btn
