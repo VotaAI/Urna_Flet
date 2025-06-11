@@ -79,3 +79,15 @@ flet build windows -v
 ```
 
 For more details on building Windows package, refer to the [Windows Packaging Guide](https://flet.dev/docs/publish/windows/).
+
+### Anotações:
+- cadastro.py -> O formulário de cadastro, usuário novo (PUBLICO)
+- criacao_votacao.py -> O formulario para criar uma votação (ADM)
+- dashboard_publico.py -> Que aparece as votações recentes, funcionalidades limitadas (PUBLICO)
+- dashboard.py -> Dashboard do ADM, pode excluir votações e ver dandidatos (ADM)
+- login.py -> Area de login, quando ja tenho uma conta (PUBLICO)
+- sobre_a_votacao.py -> Tela que mostra detalhes de uma votação (USUÁRIO)
+- tela_downloads.py -> Tela que mostra os downloads (PUBLICO)
+- tela_inicio.py -> Tela principal, falando do projeto (PUBLICO)
+- tela_votacao.py -> Tela para realizar a votação (USUÁRIO)
+- dashboard_usuario.py -> Mostra informações gerais das votações no momento (USUÁRIO)
