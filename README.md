@@ -91,3 +91,4 @@ For more details on building Windows package, refer to the [Windows Packaging Gu
 - tela_inicio.py -> Tela principal, falando do projeto (PUBLICO)
 - tela_votacao.py -> Tela para realizar a votação (USUÁRIO)
 - dashboard_usuario.py -> Mostra informações gerais das votações no momento (USUÁRIO)
+- status_votacao_adm.py -> Mostra Informações pro adm sobre a votação, com mais algumas funcionalidades
