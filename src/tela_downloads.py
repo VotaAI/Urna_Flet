@@ -37,6 +37,165 @@ def main(page: ft.Page):
         spacing=10)
     )
 
+    # CARTÕES DE PLATAFORMA
+    cartao_plataforma_windows = ft.Container(
+        content=ft.Column([
+            ft.Text("Windows", size=18, weight=ft.FontWeight.BOLD, text_align=ft.TextAlign.CENTER),
+            espacamento_pequeno,
+            ft.FilledButton(
+                text="Baixar Windows",
+                style=ft.ButtonStyle(
+                    bgcolor=ft.Colors.ON_SURFACE_VARIANT,
+                    color=ft.Colors.PRIMARY_CONTAINER,
+                    shape=ft.RoundedRectangleBorder(radius=4),
+                    padding=ft.Padding(40, 20, 40, 20),
+                ),
+                on_click=lambda e: print("Baixar Windows clicado!"),
+                width=200,
+            ),
+        ]),
+    )
+
+    cartao_plataforma_android = ft.Container(
+        content=ft.Column([
+            ft.Text("Android", size=18, weight=ft.FontWeight.BOLD, text_align=ft.TextAlign.CENTER),
+            espacamento_pequeno,
+            ft.FilledButton(
+                text="Baixar Android",
+                style=ft.ButtonStyle(
+                    bgcolor=ft.Colors.ON_SURFACE_VARIANT,
+                    color=ft.Colors.PRIMARY_CONTAINER,
+                    shape=ft.RoundedRectangleBorder(radius=4),
+                    padding=ft.Padding(40, 20, 40, 20),
+                ),
+                on_click=lambda e: print("Baixar Android clicado!"),
+                width=200,
+            ),
+        ]),
+    )
+
+    container_inicial = ft.Container(
+        content=ft.ResponsiveRow(
+            [
+                ft.Container(
+                    content=ft.Column(
+                        [
+                            ft.Text("Plataformas Disponíveis", size=20, weight=ft.FontWeight.BOLD, text_align=ft.TextAlign.CENTER),
+                            espacamento_pequeno,
+                            ft.Text("Escolha sua plataforma de download", size=14, text_align=ft.TextAlign.CENTER),
+                            ft.FilledButton(
+                                text="Baixar CSV",
+                                style=ft.ButtonStyle(
+                                    bgcolor=ft.Colors.ON_SURFACE_VARIANT,
+                                    color=ft.Colors.PRIMARY_CONTAINER,
+                                    shape=ft.RoundedRectangleBorder(radius=4),
+                                    padding=ft.Padding(40, 20, 40, 20),
+                                ),
+                                on_click=lambda e: print("Baixar CSV clicado!"),
+                                width=200,
+                            ),
+                        ],
+                        alignment=ft.MainAxisAlignment.CENTER,
+                        horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                    ),
+                    padding=20,
+                    bgcolor=ft.Colors.SURFACE,
+                    alignment=ft.alignment.center,
+                    col={"xs": 12, "md": 6, "lg": 5},
+                ),
+                ft.Container(
+                    content=ft.Row(
+                        [
+                            cartao_plataforma_windows,
+                            espacamento_pequeno,
+                            cartao_plataforma_android,
+                        ],
+                        alignment=ft.MainAxisAlignment.CENTER,
+                        spacing=20,
+                    ),
+                    alignment=ft.alignment.center,
+                    expand=True,
+                    col={"xs": 12, "md": 6, "lg": 7},
+                ),
+            ],
+            alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+            vertical_alignment=ft.CrossAxisAlignment.CENTER,
+        )
+    )
+
+    # FUNCIONALIDADES (MODERNIZADA)
+    funcionalidades = ft.Container(
+        bgcolor=ft.Colors.ON_SURFACE_VARIANT,
+        padding=40,
+        content=ft.Column(
+            [
+                ft.Text("Funcionalidades do App", size=24, weight=ft.FontWeight.BOLD, text_align=ft.TextAlign.CENTER),
+                espacamento_pequeno,
+                ft.ResponsiveRow(
+                    controls=[
+                        ft.Container(
+                            col={"xs": 12, "sm": 6, "md": 4},
+                            padding=10,
+                            content=ft.Card(
+                                content=ft.Container(
+                                    padding=20,
+                                    content=ft.Column(
+                                        [
+                                            # ft.Icon(ft.Icons.PERSON_OUTLINE, size=40),
+                                            ft.Text("Perfil Personalizado", size=16, weight=ft.FontWeight.BOLD, text_align=ft.TextAlign.CENTER),
+                                            ft.Text("Gerencie suas informações, preferências e acompanhe seu histórico de votação."),
+                                        ],
+                                        horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                                        spacing=10
+                                    )
+                                )
+                            )
+                        ),
+                        ft.Container(
+                            col={"xs": 12, "sm": 6, "md": 4},
+                            padding=10,
+                            content=ft.Card(
+                                content=ft.Container(
+                                    padding=20,
+                                    content=ft.Column(
+                                        [
+                                            # ft.Icon(ft.cons.HOW_TO_VOTE_OUTLINED, size=40),
+                                            ft.Text("Votações em Tempo Real", size=16, weight=ft.FontWeight.BOLD, text_align=ft.TextAlign.CENTER),
+                                            ft.Text("Participe de votações instantaneamente com resultados em tempo real."),
+                                        ],
+                                        horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                                        spacing=10
+                                    )
+                                )
+                            )
+                        ),
+                        ft.Container(
+                            col={"xs": 12, "sm": 6, "md": 4},
+                            padding=10,
+                            content=ft.Card(
+                                content=ft.Container(
+                                    padding=20,
+                                    content=ft.Column(
+                                        [
+                                            # ft.Icon(ft.icons.NOTIFICATIONS_ACTIVE_OUTLINED, size=40),
+                                            ft.Text("Notificações Instantâneas", size=16, weight=ft.FontWeight.BOLD, text_align=ft.TextAlign.CENTER),
+                                            ft.Text("Receba alertas sobre novas votações, resultados e atualizações."),
+                                        ],
+                                        horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                                        spacing=10
+                                    )
+                                )
+                            )
+                        )
+                    ],
+                    alignment=ft.MainAxisAlignment.CENTER
+                )
+            ],
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+            spacing=30
+        )
+    )
+
     # FOOTER
     footer = ft.Container(
         bgcolor=ft.Colors.GREY_100,
@@ -56,7 +215,10 @@ def main(page: ft.Page):
         ft.Column(
             [
                 banner,
-                espacamento, # Espaçamento entre seções
+                espacamento,
+                container_inicial,
+                espacamento,
+                funcionalidades,
                 footer,
             ],
             expand=True,
@@ -65,6 +227,5 @@ def main(page: ft.Page):
             horizontal_alignment=ft.CrossAxisAlignment.CENTER,
         )
     )
-
 
 ft.app(target=main)

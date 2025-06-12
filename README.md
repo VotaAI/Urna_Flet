@@ -92,4 +92,4 @@ For more details on building Windows package, refer to the [Windows Packaging Gu
 - tela_votacao.py -> Tela para realizar a votação (USUÁRIO)
 - dashboard_usuario.py -> Mostra informações gerais das votações no momento (USUÁRIO)
 - status_votacao_adm.py -> Mostra Informações pro adm sobre a votação, com mais algumas funcionalidades (ADM)
-- enviar_candidatura.py -> Confirmar sua candidatura para a votação
+- enviar_candidatura.py -> Confirmar sua candidatura para a votação (USUÁRIO)
