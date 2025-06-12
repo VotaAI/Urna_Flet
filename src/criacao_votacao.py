@@ -1,9 +1,77 @@
 import flet as ft
 
+informacoes_candidatos = []
+
 def main(page: ft.Page):
     page.title = "Criar votação"
     page.bgcolor = "#303030"
     page.scroll=True
+
+    candidatos_card = ft.Column()
+    candidatos_column = ft.Column()
+
+    def funcionalidade_adicionar(e):
+        if candidatos_label.value:
+            informacoes_candidatos.append({
+                "nome": candidatos_label.value,
+                "detalhes": detalhes_label.value
+            })
+
+            card_container = ft.Container()
+
+            def remover_ultimo_candidato(ev):
+                if candidatos_card.controls:
+                    candidatos_card.controls.remove(card_container)
+                    candidatos_card.update()
+
+            icone_pessoa = ft.Container(content=ft.CircleAvatar(ft.Icon(name=ft.Icons.PERSON, size=55), radius=30, bgcolor="#3a3a3a"))
+
+            apagar_btn = ft.ElevatedButton(text="Apagar", 
+                                        style=ft.ButtonStyle(
+                                            bgcolor="transparent", 
+                                            overlay_color="transparent", 
+                                            shadow_color="transparent", 
+                                            color="#ffffff", 
+                                            elevation=0, 
+                                            text_style=ft.TextStyle(size=20)), 
+                                            on_click=remover_ultimo_candidato)
+
+            card_container.content = ft.Row(
+                [
+                    ft.Row(
+                        [
+                            icone_pessoa,
+                            ft.Column([
+                                ft.Text(candidatos_label.value, size=20, color="#ffffff"),
+                                ft.Text(detalhes_label.value, size=16, color="#989898")
+                            ], spacing=1)
+                        ]
+                    ),
+                    apagar_btn
+                ],
+                spacing=10,
+                alignment=ft.MainAxisAlignment.SPACE_BETWEEN
+            )
+
+            card_container.padding = 10
+            card_container.bgcolor = "transparent"
+            card_container.border_radius = 10
+            card_container.expand = True
+            card_container.border = ft.Border(bottom=ft.BorderSide(1, "#535353"))
+            card_container.border_radius = ft.BorderRadius(bottom_left=0, bottom_right=0, top_left=0, top_right=0)
+
+            candidatos_card.controls.append(card_container)
+            candidatos_card.update()
+
+            # Limpa os campos após adicionar
+            candidatos_label.value = ""
+            detalhes_label.value = ""
+            detalhes_label.disabled = True
+            detalhes_label.opacity = 0.6
+            detalhes_label.update()
+            candidatos_label.update()
+        else:
+            print("Campo de nome está vazio")
 
     def ativar(e):
         periodo_inicio.opacity = 1
@@ -30,7 +98,7 @@ def main(page: ft.Page):
         candidaturas_sim_btn.update()
 
         candidaturas_nao_btn.style = ft.ButtonStyle(
-            side=ft.BorderSide(width=2, color="transparent"),
+            side=ft.BorderSide(width=2, color="#ffffff"),
             bgcolor="#3B3B3B",
             color="#ffffff",
             shape=ft.RoundedRectangleBorder(radius=10)
@@ -63,7 +131,7 @@ def main(page: ft.Page):
         candidaturas_nao_btn.update()
 
         candidaturas_sim_btn.style = ft.ButtonStyle(
-            side=ft.BorderSide(width=2, color="transparent"),
+            side=ft.BorderSide(width=2, color="#ffffff"),
             bgcolor="#3B3B3B",
             color="#ffffff",
             shape=ft.RoundedRectangleBorder(radius=10)
@@ -127,14 +195,14 @@ def main(page: ft.Page):
     candidaturas_sim_btn = ft.ElevatedButton(text="Sim", 
                                             color="#ffffff", 
                                             expand=True,
-                                            style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=10), bgcolor="#3B3B3B", side=ft.BorderSide(width=2, color="transparent")), 
+                                            style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=10), bgcolor="#3B3B3B", side=ft.BorderSide(width=2, color="#ffffff")), 
                                             height=45,
                                             on_click=ativar)
     
     candidaturas_nao_btn = ft.ElevatedButton(text="Não", 
                                             color="#ffffff", 
                                             expand=True, 
-                                            style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=10), bgcolor="#3B3B3B", side=ft.BorderSide(width=2, color="transparent")), 
+                                            style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=10), bgcolor="#3B3B3B", side=ft.BorderSide(width=2, color="#ffffff")), 
                                             height=45,
                                             on_click=desativar)
     
@@ -146,7 +214,7 @@ def main(page: ft.Page):
     periodo_inicio_label = ft.TextField(disabled=True, bgcolor="#FFFFFF", opacity=0.6, color="#000000", border_radius=10, border_color="#352A2A")
     periodo_inicio_container = ft.Container(content=ft.Column([periodo_inicio, periodo_inicio_label], spacing=1))
 
-    periodo_termino = ft.Text("Data de Término", size=18, opacity=0.6)
+    periodo_termino = ft.Text("Data de Término", size=18, opacity=0.6, color="#ffffff")
     periodo_termino_label = ft.TextField(disabled=True, bgcolor="#ffffff", opacity=0.6, color="#000000", border_radius=10, border_color="#352A2A")
     periodo_termino_container = ft.Container(content=ft.Column([periodo_termino, periodo_termino_label], spacing=1))
 
@@ -164,12 +232,15 @@ def main(page: ft.Page):
         text="Adicionar", 
         style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=10), bgcolor="#3B3B3B", color="#ffffff"), 
         expand=True,
-        height=45)
+        height=45,
+        on_click=funcionalidade_adicionar)
     
     adicionar_btn_container = ft.Container(content=ft.Row([adicionar_btn]))
     
     opcoes_disponiveis_titulo = ft.Text("Opções disponíveis", size=32, color="#ffffff")
+
     opcoes_disponiveis_titulo_container = ft.Container(content=ft.Row([opcoes_disponiveis_titulo], alignment=ft.MainAxisAlignment.START))
+    opcoes_disponiveis_cards_container = ft.Container(content=ft.Column([candidatos_card], alignment=ft.MainAxisAlignment.START, expand=True))
 
     voltar_btn = ft.ElevatedButton(
         text="Voltar",
@@ -203,7 +274,8 @@ def main(page: ft.Page):
                             detalhes_container,
                             adicionar_btn_container,
                             opcoes_disponiveis_titulo_container,
-                            criar_voltar_btn_container], spacing=30, alignment=ft.MainAxisAlignment.CENTER, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
+                            opcoes_disponiveis_cards_container,
+                            criar_voltar_btn_container], spacing=30, alignment=ft.MainAxisAlignment.START, horizontal_alignment=ft.CrossAxisAlignment.START),
                             alignment=ft.alignment.center,
                             padding=ft.padding.only(right=550, left=550)
     )
