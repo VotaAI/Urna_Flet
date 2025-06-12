@@ -8,7 +8,6 @@ def main(page: ft.Page):
     page.scroll=True
 
     candidatos_card = ft.Column()
-    candidatos_column = ft.Column()
 
     def funcionalidade_adicionar(e):
         if candidatos_label.value:
@@ -24,7 +23,7 @@ def main(page: ft.Page):
                     candidatos_card.controls.remove(card_container)
                     candidatos_card.update()
 
-            icone_pessoa = ft.Container(content=ft.CircleAvatar(ft.Icon(name=ft.Icons.PERSON, size=55), radius=30, bgcolor="#3a3a3a"))
+            icone_pessoa = ft.Container(content=ft.CircleAvatar(ft.Icon(name=ft.Icons.PERSON, size=55, color="#54799B"), radius=30, bgcolor="#3a3a3a"))
 
             apagar_btn = ft.ElevatedButton(text="Apagar", 
                                         style=ft.ButtonStyle(
@@ -264,21 +263,29 @@ def main(page: ft.Page):
     )
 
     container_labels = ft.Container(
-        content=ft.Column([nome_votacao_container, 
-                            descricao_container, 
-                            categoria_container,
-                            candidaturas_container, 
-                            periodo_inicio_container, 
-                            periodo_termino_container, 
-                            candidatos_container, 
-                            detalhes_container,
-                            adicionar_btn_container,
-                            opcoes_disponiveis_titulo_container,
-                            opcoes_disponiveis_cards_container,
-                            criar_voltar_btn_container], spacing=30, alignment=ft.MainAxisAlignment.START, horizontal_alignment=ft.CrossAxisAlignment.START),
-                            alignment=ft.alignment.center,
-                            padding=ft.padding.only(right=550, left=550)
-    )
+            content=ft.ResponsiveRow(
+                [
+                    ft.Container(col={"xl": 3,"md": 2, "sm": 1}),
+                    ft.Container(
+                        content=ft.Column([nome_votacao_container, 
+                                    descricao_container, 
+                                    categoria_container,
+                                    candidaturas_container, 
+                                    periodo_inicio_container, 
+                                    periodo_termino_container, 
+                                    candidatos_container, 
+                                    detalhes_container,
+                                    adicionar_btn_container,
+                                    opcoes_disponiveis_titulo_container,
+                                    opcoes_disponiveis_cards_container,
+                                    criar_voltar_btn_container], spacing=30),
+                                    alignment=ft.alignment.center,
+                                    col={"xl": 6,"md": 8, "sm": 10}
+                        ),
+                        ft.Container(col={"xl": 3,"md": 2, "sm": 1})
+                ]
+            )
+        )
 
     page.add(container_titulo, container_labels)
 
