@@ -57,12 +57,17 @@ def main(page: ft.Page):
         padding=ft.padding.only(right=100, left=100)
     )
 
-    container_labels = ft.Container(content=ft.Column([
-        nome_candidato_container,
-        descricao_container,
-        nome_votacao_container,
-        enviar_voltar_btn_container
-    ], spacing=40, alignment=ft.MainAxisAlignment.CENTER, horizontal_alignment=ft.CrossAxisAlignment.CENTER))
+    container_labels = ft.Container(content=
+        ft.ResponsiveRow([
+           ft.Container(col={"xl": 3,"lg": 2, "sm": 1}),
+            ft.Container(content=ft.Column([
+                nome_candidato_container,
+                descricao_container,
+                nome_votacao_container,
+                enviar_voltar_btn_container
+            ], spacing=40), col={"xl": 6, "lg":8, "sm": 10}),
+            ft.Container(col={"xl": 3, "lg": 2, "sm": 1})
+        ]))
 
     page.add(container_titulo, container_labels)
 
