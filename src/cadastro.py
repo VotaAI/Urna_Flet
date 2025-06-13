@@ -1,4 +1,5 @@
 import flet as ft
+import requests
 
 def main(page: ft.Page):
     page.title = "Cadastrar-se"
@@ -6,6 +7,39 @@ def main(page: ft.Page):
     page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
     page.bgcolor = "#303030"
     page.scroll = False
+
+    def cadastrar(e):
+        if senha_label.value == senha_confirmar_label.value:
+            url = "https://backend-api-urna.onrender.com/cadastro/"
+
+            header = {
+                'accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+
+            data = {
+                "nome_completo": nome_completo_label.value,
+                "cpf": cpf_label.value,
+                "email": email_label.value,
+                "user_type": "user",
+                "senha": senha_label.value
+            }
+
+            
+            response = requests.post(
+                url,
+                headers=header,
+                json=data
+            )
+
+            print("Status Code:", response.status_code)
+            print("Resposta JSON:", response.json())
+
+        else:
+            mensagem_status_senha.value = "As senhas não coincidem!"
+            mensagem_status_senha.color = "red"
+            mensagem_status_senha.update()
+            page.update()
 
     page.appbar = ft.AppBar(
         leading=ft.Icon(ft.Icons.HOW_TO_VOTE),
@@ -60,18 +94,19 @@ def main(page: ft.Page):
     )
 
     senha = ft.Text("Senha:", color="#ffffff", size=20)
-    senha_label = ft.TextField(hint_text="Digite sua senha", expand=True, height=40, bgcolor="#ffffff", content_padding=10)
+    senha_label = ft.TextField(hint_text="Digite sua senha", expand=True, height=40, bgcolor="#ffffff", content_padding=10, password=True, can_reveal_password=True)
+    mensagem_status_senha = ft.Text(value="", color="red", size=15)
     container_senha = ft.Container(
-        content=ft.Column([senha, senha_label], spacing=5)
+        content=ft.Column([senha, senha_label, mensagem_status_senha], spacing=5)
     )
 
     senha_confirmar = ft.Text("Senha:", color="#ffffff", size=20)
-    senha_confirmar_label = ft.TextField(hint_text="Confirme sua senha", expand=True, height=40, bgcolor="#ffffff", content_padding=10)
+    senha_confirmar_label = ft.TextField(hint_text="Confirme sua senha", expand=True, height=40, bgcolor="#ffffff", content_padding=10, password=True, can_reveal_password=True) 
     container_senha_confirmar = ft.Container(
-        content=ft.Column([senha_confirmar, senha_confirmar_label], spacing=5)
+        content=ft.Column([senha_confirmar, senha_confirmar_label, mensagem_status_senha], spacing=5)
     )
 
-    login = ft.Row([
+    registrar = ft.Row([
         ft.ElevatedButton(
             text="Registrar",
             bgcolor="#ffffff",
@@ -82,11 +117,12 @@ def main(page: ft.Page):
                 shape=ft.RoundedRectangleBorder(radius=10),
                 text_style=ft.TextStyle(size=20, weight=ft.FontWeight.BOLD)
             ),
+            on_click=cadastrar
         )
     ])
 
     column_labels = ft.Column(
-        [container_nome, container_cpf, container_email, container_senha, container_senha_confirmar, login],
+        [container_nome, container_cpf, container_email, container_senha, container_senha_confirmar, registrar],
         spacing=50
     )
 
