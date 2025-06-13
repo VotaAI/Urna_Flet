@@ -1,28 +1,10 @@
 import flet as ft
 
-def main(page: ft.Page):
-    page.title = "Vota AÍ - Instale nosso App"
-    page.theme_mode = ft.ThemeMode.LIGHT
-    page.scroll = ft.ScrollMode.AUTO
-    page.padding = 0
-
-    page.appbar = ft.AppBar(
-        leading=ft.Icon(ft.Icons.HOW_TO_VOTE),
-        title=ft.Text("VotaAÍ"),
-        center_title=False,
-        actions=[
-            ft.TextButton(text="Tela Inicial"),
-            ft.TextButton(text="Votações"),
-            ft.TextButton(text="Instalar"),
-            ft.TextButton(text="Entrar"),
-        ],
-    )
-
+def tela_downloads(page: ft.Page):
     espacamento = ft.Container(height=60)
     espacamento_pequeno = ft.Container(height=20)
-    espacamento_muito_pequeno = ft.Container(height=10)
 
-    # HERO SECTION
+    # BANNER
     banner = ft.Container(
         padding=30,
         content=ft.Column([
@@ -32,37 +14,37 @@ def main(page: ft.Page):
             ft.ResponsiveRow([
                 ft.Container(col={"md":1,"lg": 2}),
                 ft.FilledButton(
-                text="Voltar para a tela inicial",
-                style=ft.ButtonStyle(
-                    bgcolor=ft.Colors.ON_SURFACE_VARIANT,
-                    color=ft.Colors.PRIMARY_CONTAINER,
-                    shape=ft.RoundedRectangleBorder(radius=4),
-                    padding=ft.Padding(40, 20, 40, 20),
-                ),
-                on_click=lambda e: print("Baixar Android clicado!"),
-                width=300,
-                col={"xs": 12, "sm": 6, "md": 5, "lg": 2},
+                    text="Voltar para a tela inicial",
+                    style=ft.ButtonStyle(
+                        bgcolor=ft.Colors.ON_SURFACE_VARIANT,
+                        color=ft.Colors.PRIMARY_CONTAINER,
+                        shape=ft.RoundedRectangleBorder(radius=4),
+                        padding=ft.Padding(40, 20, 40, 20),
+                    ),
+                    on_click=lambda e: page.go("/"),  # ir para tela inicial
+                    width=300,
+                    col={"xs": 12, "sm": 6, "md": 5, "lg": 2},
                 ),
                 ft.FilledButton(
-                text="Instalar Agora",
-                style=ft.ButtonStyle(
-                    bgcolor=ft.Colors.ON_SURFACE_VARIANT,
-                    color=ft.Colors.PRIMARY_CONTAINER,
-                    shape=ft.RoundedRectangleBorder(radius=4),
-                    padding=ft.Padding(40, 20, 40, 20),
+                    text="Instalar Agora",
+                    style=ft.ButtonStyle(
+                        bgcolor=ft.Colors.ON_SURFACE_VARIANT,
+                        color=ft.Colors.PRIMARY_CONTAINER,
+                        shape=ft.RoundedRectangleBorder(radius=4),
+                        padding=ft.Padding(40, 20, 40, 20),
+                    ),
+                    on_click=lambda e: print("Instalar Agora clicado!"),
+                    width=300,
+                    col={"xs": 12, "sm": 6, "md": 5, "lg": 2}
                 ),
-                on_click=lambda e: print("Baixar Android clicado!"),
-                width=300,
-                col={"xs": 12, "sm": 6, "md": 5, "lg": 2}
-                ),
-                ft.Container(col={"lg": 2, "md":1,})
+                ft.Container(col={"lg": 2, "md":1})
             ], alignment=ft.MainAxisAlignment.CENTER)
         ],
         horizontal_alignment=ft.CrossAxisAlignment.CENTER,
         spacing=10)
     )
 
-    # CARTÕES DE PLATAFORMA
+    # CARTÕES
     cartao_plataforma_windows = ft.Container(
         content=ft.Column([
             ft.Text("Windows", size=18, weight=ft.FontWeight.BOLD, text_align=ft.TextAlign.CENTER),
@@ -71,17 +53,12 @@ def main(page: ft.Page):
             espacamento_pequeno,
             ft.FilledButton(
                 text="Baixar Windows",
-                style=ft.ButtonStyle(
-                    bgcolor=ft.Colors.ON_SURFACE_VARIANT,
-                    color=ft.Colors.PRIMARY_CONTAINER,
-                    shape=ft.RoundedRectangleBorder(radius=4),
-                    padding=ft.Padding(40, 20, 40, 20),
-                ),
                 on_click=lambda e: print("Baixar Windows clicado!"),
                 width=200,
             ),
         ]),
         padding=20,
+        border=ft.border.all(0.5, ft.Colors.GREY_500)
     )
 
     cartao_plataforma_android = ft.Container(
@@ -92,18 +69,12 @@ def main(page: ft.Page):
             espacamento_pequeno,
             ft.FilledButton(
                 text="Baixar Android",
-                style=ft.ButtonStyle(
-                    bgcolor=ft.Colors.ON_SURFACE_VARIANT,
-                    color=ft.Colors.PRIMARY_CONTAINER,
-                    shape=ft.RoundedRectangleBorder(radius=4),
-                    padding=ft.Padding(40, 20, 40, 20),
-                ),
                 on_click=lambda e: print("Baixar Android clicado!"),
                 width=200,
             ),
-        ],
-        ),
+        ]),
         padding=20,
+        border=ft.border.all(0.5, ft.Colors.GREY_500)
     )
 
     container_inicial = ft.Container(
@@ -125,12 +96,9 @@ def main(page: ft.Page):
                     alignment=ft.alignment.center,
                     col={"xs": 12, "md": 6, "lg": 4},
                 ),
-                
                 ft.Container(
                     content=ft.Row(
-                        [
-                            cartao_plataforma_windows,
-                        ],
+                        [cartao_plataforma_windows],
                         alignment=ft.MainAxisAlignment.CENTER,
                         spacing=20,
                     ),
@@ -141,9 +109,7 @@ def main(page: ft.Page):
                 ft.Container(col={"lg": 1}),
                 ft.Container(
                     content=ft.Row(
-                        [
-                            cartao_plataforma_android,
-                        ],
+                        [cartao_plataforma_android],
                         alignment=ft.MainAxisAlignment.CENTER,
                         spacing=20,
                     ),
@@ -158,7 +124,7 @@ def main(page: ft.Page):
         )
     )
 
-    # FUNCIONALIDADES (MODERNIZADA)
+    # FUNCIONALIDADES
     funcionalidades = ft.Container(
         padding=40,
         content=ft.Column(
@@ -175,7 +141,6 @@ def main(page: ft.Page):
                                     padding=20,
                                     content=ft.Column(
                                         [
-                                            # ft.Icon(ft.Icons.PERSON_OUTLINE, size=40),
                                             ft.Text("Perfil Personalizado", size=16, weight=ft.FontWeight.BOLD, text_align=ft.TextAlign.CENTER),
                                             ft.Text("Gerencie suas informações, preferências e acompanhe seu histórico de votação."),
                                         ],
@@ -193,7 +158,6 @@ def main(page: ft.Page):
                                     padding=20,
                                     content=ft.Column(
                                         [
-                                            # ft.Icon(ft.cons.HOW_TO_VOTE_OUTLINED, size=40),
                                             ft.Text("Sua segurança é nossa preocupação", size=16, weight=ft.FontWeight.BOLD, text_align=ft.TextAlign.CENTER),
                                             ft.Text("Os seus dados são criptografados e protegidos"),
                                         ],
@@ -211,7 +175,6 @@ def main(page: ft.Page):
                                     padding=20,
                                     content=ft.Column(
                                         [
-                                            # ft.Icon(ft.icons.NOTIFICATIONS_ACTIVE_OUTLINED, size=40),
                                             ft.Text("Participe de diversas votações", size=16, weight=ft.FontWeight.BOLD, text_align=ft.TextAlign.CENTER),
                                             ft.Text("Fique por dentro das votações mais relevantes e participe ativamente."),
                                         ],
@@ -245,26 +208,27 @@ def main(page: ft.Page):
         horizontal_alignment=ft.CrossAxisAlignment.CENTER)
     )
 
-    # adiciona bordas
-    cartao_plataforma_android.border = ft.border.all(0.5, ft.Colors.GREY_500)
-    cartao_plataforma_windows.border = ft.border.all(0.5, ft.Colors.GREY_500)
-
-    page.add(
-        ft.Column(
-            [
-                banner,
-                espacamento,
-                container_inicial,
-                espacamento,
-                funcionalidades,
-                espacamento,
-                footer,
+    return ft.View(
+        route="/instalar",
+        appbar=ft.AppBar(
+            leading=ft.Icon(ft.Icons.HOW_TO_VOTE),
+            title=ft.Text("VotaAÍ"),
+            center_title=False,
+            actions=[
+                ft.TextButton(text="Tela Inicial", on_click=lambda e: page.go("/")),
+                ft.TextButton(text="Votações", on_click=lambda e: page.go("/votacoes")),
+                ft.TextButton(text="Instalar", on_click=lambda e: page.go("/instalar")),
+                ft.TextButton(text="Entrar", on_click=lambda e: page.go("/entrar")),
             ],
-            expand=True,
-            scroll=ft.ScrollMode.AUTO,
-            alignment=ft.MainAxisAlignment.START,
-            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-        )
+        ),
+        controls=[
+            banner,
+            espacamento,
+            container_inicial,
+            espacamento,
+            funcionalidades,
+            espacamento,
+            footer,
+        ],
+        scroll=ft.ScrollMode.AUTO
     )
-
-ft.app(target=main)

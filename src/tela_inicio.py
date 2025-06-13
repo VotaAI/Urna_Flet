@@ -1,79 +1,61 @@
 import flet as ft
-# TODO -> AJEIAR OS ESPAÇAMENTOS, DEIXAR MAIS LIMPO, E VER A QUESTÃO DAS IMAGENS (OK)
-# TODO -> QUESTÃO DE CONVERTER IMAGENS EM BASE64
-def main(page: ft.Page):
-    page.title = "Vota AÍ"
-    page.theme_mode = ft.ThemeMode.LIGHT # trocar modo por aqui
-    page.scroll = ft.ScrollMode.AUTO
+import requests
 
-    # BORA COMEÇAR REQUESTS!
-    import requests
+def tela_inicial(page: ft.Page) -> ft.View:
 
+    # Requisições das votações
     json_votacoes_abertas = requests.get("https://backend-api-urna.onrender.com/votacoes/open?limit=10&offset=0").json()
-    # json_votacoes_fechadas = requests.get("https://backend-api-urna.onrender.com/votacoes/closed?limit=10&offset=0").json()
     lista = []
 
     for votacao in json_votacoes_abertas:
         cartao = ft.Container(
-                    content=ft.Row(
-                        [
-                            ft.Container(
-                                width=60,
-                                height=60,
-                                bgcolor=ft.Colors.GREY_300,
-                            ),
-                            ft.Container(
-                                content=ft.Column(
-                                    [
-                                        ft.Text(f"Votação: {votacao['titulo']}", weight=ft.FontWeight.BOLD),
-                                        ft.Text(f"Período: {votacao['data_inicio']} até {votacao['data_fim']}."),
-                                        ft.Text(f"Descrição: {votacao['descricao']}."),
-                                    ]
-                                ),
-                                expand=True,
-                                padding=10,
-                            )
-                        ],
-                        alignment=ft.MainAxisAlignment.START,
-                        vertical_alignment=ft.CrossAxisAlignment.CENTER,
+            content=ft.Row(
+                [
+                    ft.Container(
+                        width=60,
+                        height=60,
+                        bgcolor=ft.Colors.GREY_300,
                     ),
-                    border_radius=10,
-                    padding=15,
-                    width=600,  # <-- Aqui você define a "largura máxima"
-                    alignment=ft.alignment.center,  # <-- Aqui centraliza horizontalmente
-                )
+                    ft.Container(
+                        content=ft.Column(
+                            [
+                                ft.Text(f"Votação: {votacao['titulo']}", weight=ft.FontWeight.BOLD),
+                                ft.Text(f"Período: {votacao['data_inicio']} até {votacao['data_fim']}"),
+                                ft.Text(f"Descrição: {votacao['descricao']}"),
+                            ]
+                        ),
+                        expand=True,
+                        padding=10,
+                    )
+                ],
+                alignment=ft.MainAxisAlignment.START,
+                vertical_alignment=ft.CrossAxisAlignment.CENTER,
+            ),
+            border_radius=10,
+            padding=15,
+            width=600,
+            alignment=ft.alignment.center,
+        )
         lista.append(cartao)
-        print(f"Votação: {votacao['titulo']}, Período: {votacao['data_inicio']} até {votacao['data_fim']}, Descrição: {votacao['descricao']}")
 
-    # for votacao in json_votacoes_fechadas:
-    #     print(f"Votação: {votacao['titulo']}, Período: {votacao['data_inicio']} até {votacao['data_fim']}, Descrição: {votacao['descricao']}")
-
-
+    # AppBar
     page.appbar = ft.AppBar(
         leading=ft.Icon(ft.Icons.HOW_TO_VOTE),
         title=ft.Text("VotaAÍ"),
         center_title=False,
         actions=[
-            ft.TextButton(text="Tela Inicial"),
+            ft.TextButton(text="Tela Inicial", on_click=lambda e: page.go("/")),
             ft.TextButton(text="Votações"),
-            ft.TextButton(text="Instalar App"),
+            ft.TextButton(text="Instalar App", on_click=lambda e: page.go("/instalar")),
             ft.TextButton(text="Entrar"),
         ],
     )
 
-    # ESPAÇAMENTOS
-    espacamento = ft.Container(height=100)  # Espaçamento entre seções
-    espacamento2 = ft.Container(height=20)  # Espaçamento entre seções
+    # Espaçamentos
+    espacamento = ft.Container(height=100)
+    espacamento2 = ft.Container(height=20)
 
-    # IMAGENS:
-    imagem_bem_vindo = ft.Image(
-        src=f"/assets/banner_votai.png",
-        width=100,
-        height=100,
-        fit=ft.ImageFit.CONTAIN,
-    )
-
-    # CONTAINER INICIAL
+    # Container inicial (boas-vindas + imagem)
     container_inicial = ft.Container(
         content=ft.ResponsiveRow(
             [
@@ -95,12 +77,11 @@ def main(page: ft.Page):
                     padding=20,
                     bgcolor=ft.Colors.SURFACE,
                     alignment=ft.alignment.center,
-
                     col={"xs": 12, "md": 6, "lg": 5},
                 ),
                 ft.Container(
                     content=ft.Image(
-                        src=f"banner_votai.png",
+                        src="banner_votai.png",
                         fit=ft.ImageFit.CONTAIN,
                     ),
                     alignment=ft.alignment.center_right,
@@ -112,20 +93,19 @@ def main(page: ft.Page):
             vertical_alignment=ft.CrossAxisAlignment.CENTER,
         )
     )
-    votacoes_dinamicas = ft.Container(
-            content=ft.Column(lista, spacing=20),
-            padding=20,
-            alignment=ft.alignment.center
-        )
 
-    # VOTAÇÕES ATUAIS
+    # Votações atuais
+    votacoes_dinamicas = ft.Container(
+        content=ft.Column(lista, spacing=20),
+        padding=20,
+        alignment=ft.alignment.center
+    )
+
     votacoes_atuais = ft.Container(
         content=ft.Column(
             [
                 ft.Text("Verificar votações atuais", size=24, weight=ft.FontWeight.BOLD),
-
                 votacoes_dinamicas,
-
                 ft.ElevatedButton(text="Ver Mais", width=200),
             ],
             horizontal_alignment=ft.CrossAxisAlignment.CENTER,
@@ -135,15 +115,7 @@ def main(page: ft.Page):
         padding=20,
     )
 
-    votacoes_dinamicas = ft.Container(
-            content=ft.Column(lista, spacing=20),
-            padding=20,
-            alignment=ft.alignment.center
-        )
-    
-
-
-    # SOBRE O VOTA AÍ
+    # Sobre o VotaAÍ
     sobre_vota_ai = ft.Column(
         [
             ft.Text(
@@ -194,9 +166,7 @@ def main(page: ft.Page):
         horizontal_alignment=ft.CrossAxisAlignment.CENTER,
     )
 
-
-
-    # FORMULÁRIO DE CONTATO
+    # Formulário de contato
     formulario_contato = ft.Container(
         content=ft.Column(
             [
@@ -213,7 +183,7 @@ def main(page: ft.Page):
         padding=20,
     )
 
-    # FOOTER RESPONSIVO
+    # Footer
     footer = ft.Container(
         content=ft.Column(
             [
@@ -239,25 +209,38 @@ def main(page: ft.Page):
         padding=20,
     )
 
-    # PÁGINA FINAL
-    page.add(
-        ft.Column(
-            [
-                container_inicial,
-                espacamento, # Espaçamento entre seções
-                votacoes_atuais,
-                espacamento,
-                sobre_vota_ai,
-                espacamento,
-                formulario_contato,
-                espacamento,
-                footer,
+    # View Final
+    return ft.View(
+        route="/",
+        appbar=ft.AppBar(
+            leading=ft.Icon(ft.Icons.HOW_TO_VOTE),
+            title=ft.Text("VotaAÍ"),
+            center_title=False,
+            actions=[
+                ft.TextButton(text="Tela Inicial", on_click=lambda e: page.go("/")),
+                ft.TextButton(text="Votações"),
+                ft.TextButton(text="Instalar App", on_click=lambda e: page.go("/instalar")),
+                ft.TextButton(text="Entrar"),
             ],
-            expand=True,
-            scroll=ft.ScrollMode.AUTO,
-            alignment=ft.MainAxisAlignment.START,
-            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-        )
+        ),
+        controls=[
+            ft.Column(
+                [
+                    container_inicial,
+                    espacamento,
+                    votacoes_atuais,
+                    espacamento,
+                    sobre_vota_ai,
+                    espacamento,
+                    formulario_contato,
+                    espacamento,
+                    footer,
+                ],
+                expand=True,
+                scroll=ft.ScrollMode.AUTO,
+                alignment=ft.MainAxisAlignment.START,
+                horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+            )
+        ],
+        scroll=ft.ScrollMode.AUTO,
     )
-
-ft.app(target=main)

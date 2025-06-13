@@ -1,26 +1,18 @@
 import flet as ft
-
+from tela_inicio import tela_inicial
+from tela_downloads import tela_downloads
 
 def main(page: ft.Page):
-    counter = ft.Text("0", size=50, data=0)
+    def route_change(route):
+        page.views.clear()
 
-    def increment_click(e):
-        counter.data += 1
-        counter.value = str(counter.data)
-        counter.update()
+        if page.route == "/":
+            page.views.append(tela_inicial(page))
+        elif page.route == "/instalar":
+            page.views.append(tela_downloads(page))
+        page.update()
 
-    page.floating_action_button = ft.FloatingActionButton(
-        icon=ft.Icons.ADD, on_click=increment_click
-    )
-    page.add(
-        ft.SafeArea(
-            ft.Container(
-                counter,
-                alignment=ft.alignment.center,
-            ),
-            expand=True,
-        )
-    )
+    page.on_route_change = route_change
+    page.go(page.route)
 
-
-ft.app(main)
+ft.app(target=main)
