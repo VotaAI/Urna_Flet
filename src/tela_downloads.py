@@ -20,6 +20,7 @@ def main(page: ft.Page):
 
     espacamento = ft.Container(height=60)
     espacamento_pequeno = ft.Container(height=20)
+    espacamento_muito_pequeno = ft.Container(height=10)
 
     # HERO SECTION
     banner = ft.Container(
@@ -42,6 +43,8 @@ def main(page: ft.Page):
         content=ft.Column([
             ft.Text("Windows", size=18, weight=ft.FontWeight.BOLD, text_align=ft.TextAlign.CENTER),
             espacamento_pequeno,
+            ft.Text("Disponível .EXE"),
+            espacamento_pequeno,
             ft.FilledButton(
                 text="Baixar Windows",
                 style=ft.ButtonStyle(
@@ -54,11 +57,14 @@ def main(page: ft.Page):
                 width=200,
             ),
         ]),
+        padding=20,
     )
 
     cartao_plataforma_android = ft.Container(
         content=ft.Column([
             ft.Text("Android", size=18, weight=ft.FontWeight.BOLD, text_align=ft.TextAlign.CENTER),
+            espacamento_pequeno,
+            ft.Text("Disponível .APK"),
             espacamento_pequeno,
             ft.FilledButton(
                 text="Baixar Android",
@@ -71,29 +77,21 @@ def main(page: ft.Page):
                 on_click=lambda e: print("Baixar Android clicado!"),
                 width=200,
             ),
-        ]),
+        ],
+        ),
+        padding=20,
     )
 
     container_inicial = ft.Container(
         content=ft.ResponsiveRow(
             [
+                ft.Container(col={"xs": 12, "md": 6, "lg": 1}),
                 ft.Container(
                     content=ft.Column(
                         [
                             ft.Text("Plataformas Disponíveis", size=20, weight=ft.FontWeight.BOLD, text_align=ft.TextAlign.CENTER),
                             espacamento_pequeno,
                             ft.Text("Escolha sua plataforma de download", size=14, text_align=ft.TextAlign.CENTER),
-                            ft.FilledButton(
-                                text="Baixar CSV",
-                                style=ft.ButtonStyle(
-                                    bgcolor=ft.Colors.ON_SURFACE_VARIANT,
-                                    color=ft.Colors.PRIMARY_CONTAINER,
-                                    shape=ft.RoundedRectangleBorder(radius=4),
-                                    padding=ft.Padding(40, 20, 40, 20),
-                                ),
-                                on_click=lambda e: print("Baixar CSV clicado!"),
-                                width=200,
-                            ),
                         ],
                         alignment=ft.MainAxisAlignment.CENTER,
                         horizontal_alignment=ft.CrossAxisAlignment.CENTER,
@@ -101,13 +99,24 @@ def main(page: ft.Page):
                     padding=20,
                     bgcolor=ft.Colors.SURFACE,
                     alignment=ft.alignment.center,
-                    col={"xs": 12, "md": 6, "lg": 5},
+                    col={"xs": 12, "md": 6, "lg": 4},
                 ),
                 ft.Container(
                     content=ft.Row(
                         [
                             cartao_plataforma_windows,
-                            espacamento_pequeno,
+                        ],
+                        alignment=ft.MainAxisAlignment.CENTER,
+                        spacing=20,
+                    ),
+                    alignment=ft.alignment.center,
+                    expand=True,
+                    col={"xs": 12, "md": 6, "lg": 2},
+                ),
+                ft.Container(
+                    content=ft.Row(
+                        [
+                            espacamento_muito_pequeno,
                             cartao_plataforma_android,
                         ],
                         alignment=ft.MainAxisAlignment.CENTER,
@@ -115,8 +124,9 @@ def main(page: ft.Page):
                     ),
                     alignment=ft.alignment.center,
                     expand=True,
-                    col={"xs": 12, "md": 6, "lg": 7},
+                    col={"xs": 12, "md": 6, "lg": 2},
                 ),
+                ft.Container(col={"xs": 12, "md": 6, "lg": 2}),
             ],
             alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
             vertical_alignment=ft.CrossAxisAlignment.CENTER,
@@ -125,7 +135,6 @@ def main(page: ft.Page):
 
     # FUNCIONALIDADES (MODERNIZADA)
     funcionalidades = ft.Container(
-        bgcolor=ft.Colors.ON_SURFACE_VARIANT,
         padding=40,
         content=ft.Column(
             [
@@ -211,6 +220,10 @@ def main(page: ft.Page):
         horizontal_alignment=ft.CrossAxisAlignment.CENTER)
     )
 
+    # adiciona bordas
+    cartao_plataforma_android.border = ft.border.all(0.5, ft.Colors.GREY_500)
+    cartao_plataforma_windows.border = ft.border.all(0.5, ft.Colors.GREY_500)
+
     page.add(
         ft.Column(
             [
@@ -219,6 +232,7 @@ def main(page: ft.Page):
                 container_inicial,
                 espacamento,
                 funcionalidades,
+                espacamento,
                 footer,
             ],
             expand=True,
