@@ -6,6 +6,49 @@ def main(page: ft.Page):
     page.theme_mode = ft.ThemeMode.LIGHT # trocar modo por aqui
     page.scroll = ft.ScrollMode.AUTO
 
+    # BORA COMEÇAR REQUESTS!
+    import requests
+
+    json_votacoes_abertas = requests.get("https://backend-api-urna.onrender.com/votacoes/open?limit=10&offset=0").json()
+    # json_votacoes_fechadas = requests.get("https://backend-api-urna.onrender.com/votacoes/closed?limit=10&offset=0").json()
+    lista = []
+
+    for votacao in json_votacoes_abertas:
+        cartao = ft.Container(
+                    content=ft.Row(
+                        [
+                            ft.Container(
+                                width=60,
+                                height=60,
+                                bgcolor=ft.Colors.GREY_300,
+                            ),
+                            ft.Container(
+                                content=ft.Column(
+                                    [
+                                        ft.Text(f"Votação: {votacao['titulo']}", weight=ft.FontWeight.BOLD),
+                                        ft.Text(f"Período: {votacao['data_inicio']} até {votacao['data_fim']}."),
+                                        ft.Text(f"Descrição: {votacao['descricao']}."),
+                                    ]
+                                ),
+                                expand=True,
+                                padding=10,
+                            )
+                        ],
+                        alignment=ft.MainAxisAlignment.START,
+                        vertical_alignment=ft.CrossAxisAlignment.CENTER,
+                    ),
+                    border_radius=10,
+                    padding=15,
+                    width=600,  # <-- Aqui você define a "largura máxima"
+                    alignment=ft.alignment.center,  # <-- Aqui centraliza horizontalmente
+                )
+        lista.append(cartao)
+        print(f"Votação: {votacao['titulo']}, Período: {votacao['data_inicio']} até {votacao['data_fim']}, Descrição: {votacao['descricao']}")
+
+    # for votacao in json_votacoes_fechadas:
+    #     print(f"Votação: {votacao['titulo']}, Período: {votacao['data_inicio']} até {votacao['data_fim']}, Descrição: {votacao['descricao']}")
+
+
     page.appbar = ft.AppBar(
         leading=ft.Icon(ft.Icons.HOW_TO_VOTE),
         title=ft.Text("VotaAÍ"),
@@ -69,6 +112,11 @@ def main(page: ft.Page):
             vertical_alignment=ft.CrossAxisAlignment.CENTER,
         )
     )
+    votacoes_dinamicas = ft.Container(
+            content=ft.Column(lista, spacing=20),
+            padding=20,
+            alignment=ft.alignment.center
+        )
 
     # VOTAÇÕES ATUAIS
     votacoes_atuais = ft.Container(
@@ -76,34 +124,7 @@ def main(page: ft.Page):
             [
                 ft.Text("Verificar votações atuais", size=24, weight=ft.FontWeight.BOLD),
 
-                ft.Container(
-                    content=ft.Row(
-                        [
-                            ft.Container(
-                                width=60,
-                                height=60,
-                                bgcolor=ft.Colors.GREY_300,
-                            ),
-                            ft.Container(
-                                content=ft.Column(
-                                    [
-                                        ft.Text("Votação para novo Representante", weight=ft.FontWeight.BOLD),
-                                        ft.Text("Período: 30/05/2025 até 06/06/2025."),
-                                        ft.Text("Descrição: Votação para eleição do novo Representante de Classe."),
-                                    ]
-                                ),
-                                expand=True,
-                                padding=10,
-                            )
-                        ],
-                        alignment=ft.MainAxisAlignment.START,
-                        vertical_alignment=ft.CrossAxisAlignment.CENTER,
-                    ),
-                    border_radius=10,
-                    padding=15,
-                    width=600,  # <-- Aqui você define a "largura máxima"
-                    alignment=ft.alignment.center,  # <-- Aqui centraliza horizontalmente
-                ),
+                votacoes_dinamicas,
 
                 ft.ElevatedButton(text="Ver Mais", width=200),
             ],
@@ -113,6 +134,13 @@ def main(page: ft.Page):
         alignment=ft.alignment.center,
         padding=20,
     )
+
+    votacoes_dinamicas = ft.Container(
+            content=ft.Column(lista, spacing=20),
+            padding=20,
+            alignment=ft.alignment.center
+        )
+    
 
 
     # SOBRE O VOTA AÍ
