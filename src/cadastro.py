@@ -5,6 +5,7 @@ def main(page: ft.Page):
     page.vertical_alignment = ft.MainAxisAlignment.CENTER  # Centraliza no eixo Y
     page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
     page.bgcolor = "#303030"
+    page.scroll = False
 
     page.appbar = ft.AppBar(
         leading=ft.Icon(ft.Icons.HOW_TO_VOTE),
@@ -34,8 +35,8 @@ def main(page: ft.Page):
     
     container_titulo = ft.Container(
         content=ft.Column([titulo, subtitulo, registrar], spacing=25, alignment=ft.MainAxisAlignment.CENTER, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
-        padding=200,
-        col={"xs":6, "md":1, "xl":6},
+        # padding=200,
+        # col={"xs":6, "md":1, "xl":6},
         alignment=ft.alignment.center,
         margin=ft.padding.only(bottom=90)
     )
@@ -84,16 +85,35 @@ def main(page: ft.Page):
         )
     ])
 
+    column_labels = ft.Column(
+        [container_nome, container_cpf, container_email, container_senha, container_senha_confirmar, login],
+        spacing=50
+    )
 
     container_labels = ft.Container(
-        content=ft.Column([container_nome, container_cpf, container_email, container_senha, container_senha_confirmar, login], spacing=50),
-        padding=150,
-        col={"xs":6, "md":1, "xl":6},
+        content=column_labels,
+        # padding=150,
+        # col={"xs":6, "md":1, "xl":6},
         alignment=ft.alignment.center
     )
 
-    linha = ft.ResponsiveRow(
-        controls=[container_titulo, container_labels],
+    def resize_handler(e=None):
+        if page.window.width < 1200:  # Breakpoint médio do Flet
+            print("a")
+            container_titulo.margin = ft.Margin(0, 0, 0, 35)
+            column_labels.spacing = 25
+        if page.window.width > 1200:
+            column_labels.spacing = 50
+        page.update()
+
+    page.on_resized = resize_handler
+
+    linha = ft.ResponsiveRow([
+        ft.Container(content=ft.Column(), col={"xl":1}),
+        ft.Container(content=ft.Column([container_titulo]), col={"xl":4, "md": 8, "sm": 10}),
+        ft.Container(content=ft.Column(), col={"xl":1}),
+        ft.Container(content=ft.Column([container_labels]), col={"xl":4, "md": 8, "sm": 10}),   
+        ft.Container(content=ft.Column(), col={"xl":1})],
         alignment=ft.MainAxisAlignment.CENTER,  # Centraliza horizontalmente na linha
         vertical_alignment=ft.CrossAxisAlignment.CENTER  # Alinha os itens no meio verticalmente
     )
