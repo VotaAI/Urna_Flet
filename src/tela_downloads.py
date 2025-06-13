@@ -29,9 +29,33 @@ def main(page: ft.Page):
             ft.Text("Conheça nosso aplicativo!", size=28, weight=ft.FontWeight.BOLD, text_align=ft.TextAlign.CENTER),
             ft.Text("Faça o download para obter nossos recursos", size=16, text_align=ft.TextAlign.CENTER),
             espacamento_pequeno,
-            ft.Row([
-                ft.OutlinedButton("Conferir mais"),
-                ft.FilledButton("Instalar agora"),
+            ft.ResponsiveRow([
+                ft.Container(col={"md":1,"lg": 2}),
+                ft.FilledButton(
+                text="Voltar para a tela inicial",
+                style=ft.ButtonStyle(
+                    bgcolor=ft.Colors.ON_SURFACE_VARIANT,
+                    color=ft.Colors.PRIMARY_CONTAINER,
+                    shape=ft.RoundedRectangleBorder(radius=4),
+                    padding=ft.Padding(40, 20, 40, 20),
+                ),
+                on_click=lambda e: print("Baixar Android clicado!"),
+                width=300,
+                col={"xs": 12, "sm": 6, "md": 5, "lg": 2},
+                ),
+                ft.FilledButton(
+                text="Instalar Agora",
+                style=ft.ButtonStyle(
+                    bgcolor=ft.Colors.ON_SURFACE_VARIANT,
+                    color=ft.Colors.PRIMARY_CONTAINER,
+                    shape=ft.RoundedRectangleBorder(radius=4),
+                    padding=ft.Padding(40, 20, 40, 20),
+                ),
+                on_click=lambda e: print("Baixar Android clicado!"),
+                width=300,
+                col={"xs": 12, "sm": 6, "md": 5, "lg": 2}
+                ),
+                ft.Container(col={"lg": 2, "md":1,})
             ], alignment=ft.MainAxisAlignment.CENTER)
         ],
         horizontal_alignment=ft.CrossAxisAlignment.CENTER,
@@ -85,7 +109,7 @@ def main(page: ft.Page):
     container_inicial = ft.Container(
         content=ft.ResponsiveRow(
             [
-                ft.Container(col={"xs": 12, "md": 6, "lg": 1}),
+                ft.Container(col={"xs": 12,"lg": 1}),
                 ft.Container(
                     content=ft.Column(
                         [
@@ -101,6 +125,7 @@ def main(page: ft.Page):
                     alignment=ft.alignment.center,
                     col={"xs": 12, "md": 6, "lg": 4},
                 ),
+                
                 ft.Container(
                     content=ft.Row(
                         [
@@ -113,10 +138,10 @@ def main(page: ft.Page):
                     expand=True,
                     col={"xs": 12, "md": 6, "lg": 2},
                 ),
+                ft.Container(col={"lg": 1}),
                 ft.Container(
                     content=ft.Row(
                         [
-                            espacamento_muito_pequeno,
                             cartao_plataforma_android,
                         ],
                         alignment=ft.MainAxisAlignment.CENTER,
@@ -169,8 +194,8 @@ def main(page: ft.Page):
                                     content=ft.Column(
                                         [
                                             # ft.Icon(ft.cons.HOW_TO_VOTE_OUTLINED, size=40),
-                                            ft.Text("Votações em Tempo Real", size=16, weight=ft.FontWeight.BOLD, text_align=ft.TextAlign.CENTER),
-                                            ft.Text("Participe de votações instantaneamente com resultados em tempo real."),
+                                            ft.Text("Sua segurança é nossa preocupação", size=16, weight=ft.FontWeight.BOLD, text_align=ft.TextAlign.CENTER),
+                                            ft.Text("Os seus dados são criptografados e protegidos"),
                                         ],
                                         horizontal_alignment=ft.CrossAxisAlignment.CENTER,
                                         spacing=10
@@ -187,8 +212,8 @@ def main(page: ft.Page):
                                     content=ft.Column(
                                         [
                                             # ft.Icon(ft.icons.NOTIFICATIONS_ACTIVE_OUTLINED, size=40),
-                                            ft.Text("Notificações Instantâneas", size=16, weight=ft.FontWeight.BOLD, text_align=ft.TextAlign.CENTER),
-                                            ft.Text("Receba alertas sobre novas votações, resultados e atualizações."),
+                                            ft.Text("Participe de diversas votações", size=16, weight=ft.FontWeight.BOLD, text_align=ft.TextAlign.CENTER),
+                                            ft.Text("Fique por dentro das votações mais relevantes e participe ativamente."),
                                         ],
                                         horizontal_alignment=ft.CrossAxisAlignment.CENTER,
                                         spacing=10
