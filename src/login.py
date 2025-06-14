@@ -1,11 +1,39 @@
 import flet as ft
+import requests
 
 def main(page: ft.Page):
     page.title = "Login"
     page.vertical_alignment = ft.MainAxisAlignment.CENTER  # Centraliza no eixo Y
     page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
     page.bgcolor = "#303030"
-    page.scroll = True
+    # page.scroll = True
+
+    def login(e):
+        url = "https://backend-api-urna.onrender.com/login/"
+
+        header = {
+                'accept': 'application/json',
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+        
+        data = {
+            "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjciLCJlbWFpbCI6InN0cmluZyIsInVzZXJfdHlwZSI6InN0cmluZyIsIm5vbWVfY29tcGxldG8iOiJzdHJpbmciLCJleHAiOjE3NDk5MTQwMDl9.sXHDUUtR90Qi5L-dSum2o-FzIGU6tqJZboVLSrYFXGo",
+            "token_type": "bearer",
+            "user": {
+                "nome_completo": "string",
+                "id_user": 7,
+                "email": "string",
+                "cpf": "string",
+                "user_type": "string"
+            }
+            }
+        
+        response = requests.post(url=url,
+                                headers=header,
+                                json=data)
+        
+        print("Status Code:", response.status_code)
+        print("Resposta JSON:", response.json())
 
     page.appbar = ft.AppBar(
         leading=ft.Icon(ft.Icons.HOW_TO_VOTE),
@@ -53,14 +81,14 @@ def main(page: ft.Page):
     # resize_handler()
 
     email_cpf = ft.Text("Email/CPF", color="#ffffff", size=20)
-    email_cpf_label = ft.TextField(hint_text="Insira seu Email ou CPF", expand=True, height=40, bgcolor="#ffffff", content_padding=10)
+    email_cpf_label = ft.TextField(hint_text="Insira seu Email ou CPF", expand=True, height=40, bgcolor="#ffffff", content_padding=10, color="#000000")
 
     container_email = ft.Container(
         content=ft.Column([email_cpf, email_cpf_label], spacing=5)
     )
 
     senha = ft.Text("Senha", color="#ffffff", size=20)
-    senha_label = ft.TextField(hint_text="Digite sua senha", expand=True, height=40, bgcolor="#ffffff", content_padding=10)
+    senha_label = ft.TextField(hint_text="Digite sua senha", expand=True, height=40, bgcolor="#ffffff", content_padding=10, color="#000000", password=True, can_reveal_password=True)
 
     container_senha = ft.Container(
         content=ft.Column([senha, senha_label], spacing=5)
@@ -77,6 +105,7 @@ def main(page: ft.Page):
                 shape=ft.RoundedRectangleBorder(radius=10),
                 text_style=ft.TextStyle(size=20, weight=ft.FontWeight.BOLD)
             ),
+            on_click=login
         )
     ])
 
@@ -98,6 +127,18 @@ def main(page: ft.Page):
         vertical_alignment=ft.CrossAxisAlignment.CENTER  # Alinha os itens no meio verticalmente
     )
 
-    page.add(linha)
+    page.add(
+        ft.Column(
+            controls=[
+                ft.Container(
+                    content=linha,
+                    alignment=ft.alignment.center
+                )
+            ],
+            expand=True,
+            alignment=ft.MainAxisAlignment.CENTER,
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER
+        )
+    )
 
 ft.app(main)
