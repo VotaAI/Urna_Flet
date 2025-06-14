@@ -1,4 +1,5 @@
 import flet as ft
+import requests
 
 def main(page: ft.Page):
     page.title = "Enviar candidatura"
@@ -14,6 +15,43 @@ def main(page: ft.Page):
                 ft.TextButton(text="Entrar"),
             ],
         )
+    
+    def enviar_candidatura(e):
+        url = "https://backend-api-urna.onrender.com/candidaturas/"
+        
+        headers = {
+            'accept': 'application/json',
+            'Content-Type': 'application/json'
+        }
+        
+        data = {
+            "id_user": 1, 
+            "id_votacao": 1, 
+            "detalhes": descricao_label.value,
+            "status": "pendente"
+        }
+        
+        try:
+            response = requests.post(url, headers=headers, json=data, timeout=10)
+            
+            print(f"Status Code: {response.status_code}")
+            print(f"Resposta Bruta: {response.text}")  # Debug crucial
+            
+            # Verifica se a resposta contém JSON antes de decodificar
+            if response.headers.get('Content-Type', '').startswith('application/json'):
+                try:
+                    json_data = response.json()
+                    print("Resposta JSON:", json_data)
+                except ValueError:
+                    print("Erro: A resposta não é JSON válido")
+                    print("Conteúdo recebido:", response.text)
+            else:
+                print("Resposta não-JSON recebida:", response.text)
+                
+        except requests.exceptions.RequestException as error:
+            print(f"Erro na requisição: {str(error)}")
+        except Exception as error:
+            print(f"Erro inesperado: {str(error)}")
 
     titulo = ft.Text("Enviar Candidatura", size=45, weight=ft.FontWeight.BOLD, color="#ffffff")
     sub_titulo = ft.Text("Confirme os dados, envie e concorra na votação.", size=16, color="#ffffff")
@@ -48,7 +86,8 @@ def main(page: ft.Page):
         text="Enviar Votação",
         style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=10),bgcolor="#ffffff", color="#000000", text_style=ft.TextStyle(weight=ft.FontWeight.BOLD)),
         expand=True,
-        height=45
+        height=45,
+        on_click=enviar_candidatura
     )
 
     enviar_voltar_btn_container = ft.Container(

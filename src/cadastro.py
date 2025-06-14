@@ -1,10 +1,45 @@
 import flet as ft
+import requests
 
 def main(page: ft.Page):
     page.title = "Cadastrar-se"
     page.vertical_alignment = ft.MainAxisAlignment.CENTER  # Centraliza no eixo Y
     page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
     page.bgcolor = "#303030"
+    page.scroll = False
+
+    def cadastrar(e):
+        if senha_label.value == senha_confirmar_label.value:
+            url = "https://backend-api-urna.onrender.com/cadastro/"
+
+            header = {
+                'accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+
+            data = {
+                "nome_completo": nome_completo_label.value,
+                "cpf": cpf_label.value,
+                "email": email_label.value,
+                "user_type": "user",
+                "senha": senha_label.value
+            }
+
+            
+            response = requests.post(
+                url,
+                headers=header,
+                json=data
+            )
+
+            print("Status Code:", response.status_code)
+            print("Resposta JSON:", response.json())
+
+        else:
+            mensagem_status_senha.value = "As senhas não coincidem!"
+            mensagem_status_senha.color = "red"
+            mensagem_status_senha.update()
+            page.update()
 
     page.appbar = ft.AppBar(
         leading=ft.Icon(ft.Icons.HOW_TO_VOTE),
@@ -34,8 +69,8 @@ def main(page: ft.Page):
     
     container_titulo = ft.Container(
         content=ft.Column([titulo, subtitulo, registrar], spacing=25, alignment=ft.MainAxisAlignment.CENTER, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
-        padding=200,
-        col={"xs":6, "md":1, "xl":6},
+        # padding=200,
+        # col={"xs":6, "md":1, "xl":6},
         alignment=ft.alignment.center,
         margin=ft.padding.only(bottom=90)
     )
@@ -59,18 +94,19 @@ def main(page: ft.Page):
     )
 
     senha = ft.Text("Senha:", color="#ffffff", size=20)
-    senha_label = ft.TextField(hint_text="Digite sua senha", expand=True, height=40, bgcolor="#ffffff", content_padding=10)
+    senha_label = ft.TextField(hint_text="Digite sua senha", expand=True, height=40, bgcolor="#ffffff", content_padding=10, password=True, can_reveal_password=True)
+    mensagem_status_senha = ft.Text(value="", color="red", size=15)
     container_senha = ft.Container(
-        content=ft.Column([senha, senha_label], spacing=5)
+        content=ft.Column([senha, senha_label, mensagem_status_senha], spacing=5)
     )
 
     senha_confirmar = ft.Text("Senha:", color="#ffffff", size=20)
-    senha_confirmar_label = ft.TextField(hint_text="Confirme sua senha", expand=True, height=40, bgcolor="#ffffff", content_padding=10)
+    senha_confirmar_label = ft.TextField(hint_text="Confirme sua senha", expand=True, height=40, bgcolor="#ffffff", content_padding=10, password=True, can_reveal_password=True) 
     container_senha_confirmar = ft.Container(
-        content=ft.Column([senha_confirmar, senha_confirmar_label], spacing=5)
+        content=ft.Column([senha_confirmar, senha_confirmar_label, mensagem_status_senha], spacing=5)
     )
 
-    login = ft.Row([
+    registrar = ft.Row([
         ft.ElevatedButton(
             text="Registrar",
             bgcolor="#ffffff",
@@ -81,19 +117,39 @@ def main(page: ft.Page):
                 shape=ft.RoundedRectangleBorder(radius=10),
                 text_style=ft.TextStyle(size=20, weight=ft.FontWeight.BOLD)
             ),
+            on_click=cadastrar
         )
     ])
 
+    column_labels = ft.Column(
+        [container_nome, container_cpf, container_email, container_senha, container_senha_confirmar, registrar],
+        spacing=50
+    )
 
     container_labels = ft.Container(
-        content=ft.Column([container_nome, container_cpf, container_email, container_senha, container_senha_confirmar, login], spacing=50),
-        padding=150,
-        col={"xs":6, "md":1, "xl":6},
+        content=column_labels,
+        # padding=150,
+        # col={"xs":6, "md":1, "xl":6},
         alignment=ft.alignment.center
     )
 
-    linha = ft.ResponsiveRow(
-        controls=[container_titulo, container_labels],
+    def resize_handler(e=None):
+        if page.window.width < 1200:  # Breakpoint médio do Flet
+            print("a")
+            container_titulo.margin = ft.Margin(0, 0, 0, 35)
+            column_labels.spacing = 25
+        if page.window.width > 1200:
+            column_labels.spacing = 50
+        page.update()
+
+    page.on_resized = resize_handler
+
+    linha = ft.ResponsiveRow([
+        ft.Container(content=ft.Column(), col={"xl":1}),
+        ft.Container(content=ft.Column([container_titulo]), col={"xl":4, "md": 8, "sm": 10}),
+        ft.Container(content=ft.Column(), col={"xl":1}),
+        ft.Container(content=ft.Column([container_labels]), col={"xl":4, "md": 8, "sm": 10}),   
+        ft.Container(content=ft.Column(), col={"xl":1})],
         alignment=ft.MainAxisAlignment.CENTER,  # Centraliza horizontalmente na linha
         vertical_alignment=ft.CrossAxisAlignment.CENTER  # Alinha os itens no meio verticalmente
     )
