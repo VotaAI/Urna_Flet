@@ -16,21 +16,11 @@ def main(page: ft.Page):
                 'Content-Type': 'application/x-www-form-urlencoded'
             }
         
-        data = {
-            "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjciLCJlbWFpbCI6InN0cmluZyIsInVzZXJfdHlwZSI6InN0cmluZyIsIm5vbWVfY29tcGxldG8iOiJzdHJpbmciLCJleHAiOjE3NDk5MTQwMDl9.sXHDUUtR90Qi5L-dSum2o-FzIGU6tqJZboVLSrYFXGo",
-            "token_type": "bearer",
-            "user": {
-                "nome_completo": "string",
-                "id_user": 7,
-                "email": "string",
-                "cpf": "string",
-                "user_type": "string"
-            }
-            }
+        payload = f"grant_type=password&username={email_cpf_label.value}&password={senha_label.value}&client_id=string&client_secret=string&scope="
         
         response = requests.post(url=url,
                                 headers=header,
-                                json=data)
+                                json=payload)
         
         print("Status Code:", response.status_code)
         print("Resposta JSON:", response.json())
