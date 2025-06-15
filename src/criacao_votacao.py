@@ -1,4 +1,5 @@
 import flet as ft
+import requests
 
 informacoes_candidatos = []
 
@@ -8,6 +9,96 @@ def main(page: ft.Page):
     page.scroll=True
 
     candidatos_card = ft.Column()
+
+    permitir = ""
+
+    def formatar_data_inicio(e):
+        texto = periodo_inicio_label.value
+        numeros = ''.join(filter(str.isdigit, texto))[:8]  # Só números, máximo 8 dígitos
+
+        novo_texto = ""
+        if len(numeros) >= 1:
+            novo_texto += numeros[:4]
+        if len(numeros) >= 5:
+            novo_texto = numeros[:4] + "-" + numeros[4:6]
+        if len(numeros) >= 7:
+            novo_texto = numeros[:4] + "-" + numeros[4:6] + "-" + numeros[6:8]
+
+        # Atualiza apenas se o texto mudou (pra evitar loop)
+        if novo_texto != texto:
+            periodo_inicio_label.value = novo_texto
+            periodo_inicio_label.update()
+
+    def formatar_data_termino(e):
+        texto = periodo_termino_label.value
+        numeros = ''.join(filter(str.isdigit, texto))[:8]  # Só números, máximo 8 dígitos
+
+        novo_texto = ""
+        if len(numeros) >= 1:
+            novo_texto += numeros[:4]
+        if len(numeros) >= 5:
+            novo_texto = numeros[:4] + "-" + numeros[4:6]
+        if len(numeros) >= 7:
+            novo_texto = numeros[:4] + "-" + numeros[4:6] + "-" + numeros[6:8]
+
+        # Atualiza apenas se o texto mudou (pra evitar loop)
+        if novo_texto != texto:
+            periodo_termino_label.value = novo_texto
+            periodo_termino_label.update()
+
+    
+
+    def obter_token(username, password):
+        url = "https://backend-api-urna.onrender.com/token"
+
+        payload = {
+            "username": username,
+            "password": password
+        }
+
+        headers = {
+            "Content-Type": "application/x-www-form-urlencoded"
+        }
+
+        response = requests.post(url, data=payload, headers=headers)
+
+        # print("Status:", response.status_code)
+        # print("Resposta:", response.text)
+
+        if response.status_code == 200:
+            return response.json()["access_token"]
+        else:
+            return None
+
+    # token = obter_token("email", "senha")
+
+
+    def criar_votacao(e):
+        url = 'https://backend-api-urna.onrender.com/admin/votacoes/'
+
+        header = {
+            'accept': 'application/json',
+            'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjgiLCJlbWFpbCI6ImVtYWlsIiwidXNlcl90eXBlIjoiYWRtaW4iLCJub21lX2NvbXBsZXRvIjoibm9tZSIsImV4cCI6MTc1MDAxMzc5Nn0.80VEo-n5hWhBxOtS1jFvAzbyT7DReIwWYlOpjbSIHq4',
+            'Content-Type': 'application/json'
+        }
+
+        data = {
+            "titulo": nome_votacao_label.value,
+            "descricao": descricao_label.value,
+            "status": "aberta",
+            "permite_candidatura": True,
+            "data_inicio": "2025-06-15",
+            "data_fim": "2025-07-15"
+            }
+        
+        response = requests.post(
+            url=url,
+            headers=header,
+            json=data
+        )
+
+        print("Status Code:", response.status_code)
+        print("Resposta JSON:", response.json())
 
     def funcionalidade_adicionar(e):
         if candidatos_label.value:
@@ -73,19 +164,19 @@ def main(page: ft.Page):
             print("Campo de nome está vazio")
 
     def ativar(e):
-        periodo_inicio.opacity = 1
-        periodo_inicio.update()
+        # periodo_inicio.opacity = 1
+        # periodo_inicio.update()
 
-        periodo_inicio_label.disabled = False
-        periodo_inicio_label.opacity = 1
-        periodo_inicio_label.update()
+        # periodo_inicio_label.disabled = False
+        # periodo_inicio_label.opacity = 1
+        # periodo_inicio_label.update()
 
-        periodo_termino.opacity = 1
-        periodo_termino.update()
+        # periodo_termino.opacity = 1
+        # periodo_termino.update()
 
-        periodo_termino_label.disabled = False
-        periodo_termino_label.opacity = 1
-        periodo_termino_label.update()
+        # periodo_termino_label.disabled = False
+        # periodo_termino_label.opacity = 1
+        # periodo_termino_label.update()
 
         candidaturas_sim_btn.style = ft.ButtonStyle(
             side=ft.BorderSide(width=2, color="#0400FF"),
@@ -103,22 +194,26 @@ def main(page: ft.Page):
             shape=ft.RoundedRectangleBorder(radius=10)
         )
 
+        permitir = True
+        print(permitir)
+
         candidaturas_nao_btn.update()
+        return permitir
 
     def desativar(e):
-        periodo_inicio.opacity = 0.6
-        periodo_inicio.update()
+        # periodo_inicio.opacity = 0.6
+        # periodo_inicio.update()
 
-        periodo_inicio_label.disabled = True
-        periodo_inicio_label.opacity = 0.6
-        periodo_inicio_label.update()
+        # periodo_inicio_label.disabled = True
+        # periodo_inicio_label.opacity = 0.6
+        # periodo_inicio_label.update()
 
-        periodo_termino.opacity = 0.6
-        periodo_termino.update()
+        # periodo_termino.opacity = 0.6
+        # periodo_termino.update()
 
-        periodo_termino_label.disabled = True
-        periodo_termino_label.opacity = 0.6
-        periodo_termino_label.update()
+        # periodo_termino_label.disabled = True
+        # periodo_termino_label.opacity = 0.6
+        # periodo_termino_label.update()
 
         candidaturas_nao_btn.style = ft.ButtonStyle(
             side=ft.BorderSide(width=2, color="#0400FF"),
@@ -136,7 +231,12 @@ def main(page: ft.Page):
             shape=ft.RoundedRectangleBorder(radius=10)
         )
 
+        permitir = False
+        print(permitir)
+
         candidaturas_sim_btn.update()
+        return permitir
+
 
     def ativar_detalhes(e):
         if candidatos_label.value:
@@ -209,12 +309,12 @@ def main(page: ft.Page):
     candidaturas_btn_container = ft.Container(content=ft.Row([candidaturas_sim_btn, candidaturas_nao_btn]))
     candidaturas_container = ft.Container(content=ft.Column([candidaturas, candidaturas_btn_container, descricao_candidatura], spacing=1)) 
 
-    periodo_inicio = ft.Text("Data de Início", size=18, opacity=0.6, color="#ffffff")
-    periodo_inicio_label = ft.TextField(disabled=True, bgcolor="#FFFFFF", opacity=0.6, color="#000000", border_radius=10, border_color="#352A2A")
+    periodo_inicio = ft.Text("Data de Início", size=18, opacity=1, color="#ffffff")
+    periodo_inicio_label = ft.TextField(disabled=False, bgcolor="#FFFFFF", opacity=1, color="#000000", border_radius=10, border_color="#352A2A", on_change=formatar_data_inicio, hint_text="yyyy-mm-dd")
     periodo_inicio_container = ft.Container(content=ft.Column([periodo_inicio, periodo_inicio_label], spacing=1))
 
-    periodo_termino = ft.Text("Data de Término", size=18, opacity=0.6, color="#ffffff")
-    periodo_termino_label = ft.TextField(disabled=True, bgcolor="#ffffff", opacity=0.6, color="#000000", border_radius=10, border_color="#352A2A")
+    periodo_termino = ft.Text("Data de Término", size=18, opacity=1, color="#ffffff")
+    periodo_termino_label = ft.TextField(disabled=False, bgcolor="#ffffff", opacity=1, color="#000000", border_radius=10, border_color="#352A2A", on_change=formatar_data_termino, hint_text="yyyy-mm-dd")
     periodo_termino_container = ft.Container(content=ft.Column([periodo_termino, periodo_termino_label], spacing=1))
 
     candidatos = ft.Text("Registrar opção/candidato", size=18, color="#FFFFFF")
@@ -253,7 +353,8 @@ def main(page: ft.Page):
         text="Criar Votação",
         style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=10),bgcolor="#ffffff", color="#000000", text_style=ft.TextStyle(weight=ft.FontWeight.BOLD)),
         expand=True,
-        height=45
+        height=45,
+        on_click=criar_votacao
     )
 
     criar_voltar_btn_container = ft.Container(
