@@ -3,22 +3,58 @@ import requests
 # TODO: MELHGORAR CORES NAS TELAS LOGIM E CADASTRO, FICAM OK NO NAVEGADOR, MAS EM DESL=KTOP, FICA ERRADO
 def tela_login(page: ft.Page):
     page.title = "VotaAÍ - Login"
-    def login(e):
-        url = "https://backend-api-urna.onrender.com/login/"
+    page.client_storage.remove("access_token")
+    page.client_storage.remove("user_type")
+    page.client_storage.remove("user_id")
 
-        header = {
-                'accept': 'application/json',
-                'Content-Type': 'application/x-www-form-urlencoded'
-            }
-        
+    def login(e):
+        page.client_storage.remove("access_token")
+        page.client_storage.remove("user_type")
+        page.client_storage.remove("user_id")
+        url = "https://backend-api-urna.onrender.com/login/"
+        headers = {
+            'accept': 'application/json',
+            'Content-Type': 'application/x-www-form-urlencoded'
+        }
+
         payload = f"grant_type=password&username={email_cpf_label.value}&password={senha_label.value}&client_id=string&client_secret=string&scope="
         
-        response = requests.post(url=url,
-                                headers=header,
-                                json=payload)
-        
+        response = requests.post(url=url, headers=headers, data=payload)
+
         print("Status Code:", response.status_code)
-        print("Resposta JSON:", response.json())
+
+        if response.status_code == 200:
+            
+            print("Resposta JSON:", response.json())
+            data = response.json()
+            token = data["access_token"]
+            user_type = data["user"]["user_type"]
+            user_id = data["user"]["id_user"]
+            print(f"Token: {token}, Tipo de usuário: {user_type}, ID do usuário: {user_id}")
+
+            # Você pode armazenar os dados no page.client_storage se quiser manter o login
+            page.client_storage.set("token", token)
+            page.client_storage.set("user_type", user_type)
+            page.client_storage.set("user_id", user_id)
+
+            # Navegar baseado no tipo de usuário
+            if user_type == "admin":
+                page.go("/dashboard_admin")
+            elif user_type == "user":
+                page.go("/dashboard_usuario")
+            else:
+                page.snack_bar = ft.SnackBar(ft.Text("Tipo de usuário não reconhecido!"))
+                page.snack_bar.open = True
+                page.update()
+        else:
+            try:
+                erro = response.json()
+            except:
+                erro = {"detail": "Erro desconhecido"}
+
+            page.snack_bar = ft.SnackBar(ft.Text(f"Erro ao fazer login: {erro.get('detail')}"))
+            page.snack_bar.open = True
+            page.update()
 
     page.appbar = ft.AppBar(
         leading=ft.Icon(ft.Icons.HOW_TO_VOTE),

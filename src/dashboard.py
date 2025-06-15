@@ -1,21 +1,6 @@
 import flet as ft
 
-def main(page: ft.Page):
-    page.title = "Vota AÍ"
-    page.theme_mode = ft.ThemeMode.LIGHT # trocar modo por aqui
-    page.scroll = ft.ScrollMode.AUTO
-
-    page.appbar = ft.AppBar(
-        leading=ft.Icon(ft.Icons.HOW_TO_VOTE),
-        title=ft.Text("VotaAÍ"),
-        center_title=False,
-        actions=[
-            ft.TextButton(text="Tela Inicial"),
-            ft.TextButton(text="Votações"),
-            ft.TextButton(text="Instalar App"),
-            ft.TextButton(text="Entrar"),
-        ],
-    )
+def tela_dashboard_admin(page: ft.Page):
 
     # ESPAÇAMENTOS
     espacamento = ft.Container(height=100)  # Espaçamento entre seções
@@ -508,7 +493,7 @@ def main(page: ft.Page):
 
 
     # PÁGINA FINAL
-    page.add(
+    teste = page.add(
         ft.Column(
             [
                 container_inicial,
@@ -536,5 +521,38 @@ def main(page: ft.Page):
         )
     )
 
-ft.app(target=main)
+    return ft.View(
+        route="/dashboard_admin",
+        appbar=ft.AppBar(
+            leading=ft.Icon(ft.Icons.HOW_TO_VOTE),
+            title=ft.Text("VotaAÍ"),
+            center_title=False,
+            actions=[
+                ft.TextButton(text="Tela Inicial", on_click=lambda e: page.go("/")),
+                ft.TextButton(text="Votações", on_click=lambda e: page.go("/votacoes")),
+                ft.TextButton(text="Instalar", on_click=lambda e: page.go("/instalar")),
+                ft.TextButton(text="Entrar", on_click=lambda e: page.go("/entrar")),
+            ],
+        ),
+        controls=[
+                container_inicial,
+                espacamento,
+                titulo_votacoes,
+                espacamento2,  # Espaçamento entre seções
+                cartao_votacao_atual,
+                espacamento2,  # Espaçamento entre seções
+                botao_criar_votacao,
+                espacamento,  # Espaçamento entre seções
+                titulo_votacoes_fechadas,
+                espacamento2,  # Espaçamento entre seções
+                cartao_votacao_fechada,
+                espacamento,  # Espaçamento entre seções
+                container_candidatos_pendentes,
+                espacamento2,  # Espaçamento entre seções
+                tabela_candidatos_pendentes,
+                espacamento,
+                footer,
+        ],
+        scroll=ft.ScrollMode.AUTO
+    )
  
