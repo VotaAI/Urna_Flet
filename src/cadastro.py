@@ -1,12 +1,7 @@
 import flet as ft
 import requests
 
-def main(page: ft.Page):
-    page.title = "Cadastrar-se"
-    page.vertical_alignment = ft.MainAxisAlignment.CENTER  # Centraliza no eixo Y
-    page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
-    page.bgcolor = "#303030"
-    page.scroll = False
+def tela_cadastro(page: ft.Page):
 
     def cadastrar(e):
         if senha_label.value == senha_confirmar_label.value:
@@ -154,10 +149,22 @@ def main(page: ft.Page):
         vertical_alignment=ft.CrossAxisAlignment.CENTER  # Alinha os itens no meio verticalmente
     )
 
-    page.add(linha)
 
-    page.add(
-        linha
+    return ft.View(
+        route="/cadastrar",
+        appbar=ft.AppBar(
+            leading=ft.Icon(ft.Icons.HOW_TO_VOTE),
+            title=ft.Text("VotaAÍ"),
+            center_title=False,
+            actions=[
+                ft.TextButton(text="Tela Inicial", on_click=lambda e: page.go("/")),
+                ft.TextButton(text="Votações", on_click=lambda e: page.go("/votacoes")),
+                ft.TextButton(text="Instalar", on_click=lambda e: page.go("/instalar")),
+                ft.TextButton(text="Entrar", on_click=lambda e: page.go("/entrar")),
+            ],
+        ),
+        controls=[
+            linha
+        ],
+        scroll=ft.ScrollMode.AUTO
     )
-
-ft.app(main)

@@ -1,13 +1,8 @@
 import flet as ft
 import requests
-
-def main(page: ft.Page):
-    page.title = "Login"
-    page.vertical_alignment = ft.MainAxisAlignment.CENTER  # Centraliza no eixo Y
-    page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
-    page.bgcolor = "#303030"
-    # page.scroll = True
-
+# TODO: MELHGORAR CORES NAS TELAS LOGIM E CADASTRO, FICAM OK NO NAVEGADOR, MAS EM DESL=KTOP, FICA ERRADO
+def tela_login(page: ft.Page):
+    page.title = "VotaAÍ - Login"
     def login(e):
         url = "https://backend-api-urna.onrender.com/login/"
 
@@ -50,6 +45,8 @@ def main(page: ft.Page):
             shape=ft.RoundedRectangleBorder(radius=10),
             text_style=ft.TextStyle(weight=ft.FontWeight.BOLD)
             ))
+    
+    registrar.on_click = lambda e: page.go("/cadastrar")
     
     container_titulo = ft.Container(
         content=ft.Column([titulo, subtitulo, registrar], spacing=25, alignment=ft.MainAxisAlignment.CENTER, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
@@ -117,10 +114,28 @@ def main(page: ft.Page):
         vertical_alignment=ft.CrossAxisAlignment.CENTER  # Alinha os itens no meio verticalmente
     )
 
-    page.add(
-        ft.Column(
+    return ft.View(
+        
+        route="/entrar",
+        appbar=ft.AppBar(
+            leading=ft.Icon(ft.Icons.HOW_TO_VOTE),
+            title=ft.Text("VotaAÍ"),
+            center_title=False,
+            actions=[
+                ft.TextButton(text="Tela Inicial", on_click=lambda e: page.go("/")),
+                ft.TextButton(text="Votações", on_click=lambda e: page.go("/votacoes")),
+                ft.TextButton(text="Instalar", on_click=lambda e: page.go("/instalar")),
+                ft.TextButton(text="Entrar", on_click=lambda e: page.go("/entrar")),
+            ],
+        ),
+        controls=[
+            ft.Column(
             controls=[
+                ft.Container( # solucao temporaria
+                    height=100,
+                ),
                 ft.Container(
+
                     content=linha,
                     alignment=ft.alignment.center
                 )
@@ -129,6 +144,7 @@ def main(page: ft.Page):
             alignment=ft.MainAxisAlignment.CENTER,
             horizontal_alignment=ft.CrossAxisAlignment.CENTER
         )
+        ],
+        scroll=ft.ScrollMode.AUTO
     )
 
-ft.app(main)

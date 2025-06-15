@@ -1,22 +1,7 @@
 import flet as ft
 # TODO -> CORES DOS BOTÕES
 
-def main(page: ft.Page):
-    page.title = "Vota AÍ"
-    page.theme_mode = ft.ThemeMode.LIGHT # trocar modo por aqui
-    page.scroll = ft.ScrollMode.AUTO
-
-    page.appbar = ft.AppBar(
-        leading=ft.Icon(ft.Icons.HOW_TO_VOTE),
-        title=ft.Text("VotaAÍ"),
-        center_title=False,
-        actions=[
-            ft.TextButton(text="Tela Inicial"),
-            ft.TextButton(text="Votações"),
-            ft.TextButton(text="Instalar App"),
-            ft.TextButton(text="Entrar"),
-        ],
-    )
+def tela_votacoes(page: ft.Page):
 
     # ESPAÇAMENTOS
     espacamento = ft.Container(height=100)  # Espaçamento entre seções
@@ -258,12 +243,20 @@ def main(page: ft.Page):
     cartao_vencedor.border = ft.border.all(0.5, ft.Colors.GREY_500)
     cartao_votacao_atual.border = ft.border.all(0.5, ft.Colors.GREY_500)
 
-
-
-    # PÁGINA FINAL
-    page.add(
-        ft.Column(
-            [
+    return ft.View(
+        route="/votacoes",
+        appbar=ft.AppBar(
+            leading=ft.Icon(ft.Icons.HOW_TO_VOTE),
+            title=ft.Text("VotaAÍ"),
+            center_title=False,
+            actions=[
+                ft.TextButton(text="Tela Inicial", on_click=lambda e: page.go("/")),
+                ft.TextButton(text="Votações", on_click=lambda e: page.go("/votacoes")),
+                ft.TextButton(text="Instalar", on_click=lambda e: page.go("/instalar")),
+                ft.TextButton(text="Entrar", on_click=lambda e: page.go("/entrar")),
+            ],
+        ),
+        controls=[
                 container_inicial,
                 espacamento, # Espaçamento entre seções
                 container_votacao_fechada,
@@ -271,12 +264,7 @@ def main(page: ft.Page):
                 votacoes_atuais,
                 espacamento,
                 footer,
-            ],
-            expand=True,
-            scroll=ft.ScrollMode.AUTO,
-            alignment=ft.MainAxisAlignment.START,
-            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-        )
+        ],
+        scroll=ft.ScrollMode.AUTO
     )
 
-ft.app(target=main)

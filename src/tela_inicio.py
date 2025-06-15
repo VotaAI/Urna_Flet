@@ -45,9 +45,9 @@ def tela_inicial(page: ft.Page) -> ft.View:
         center_title=False,
         actions=[
             ft.TextButton(text="Tela Inicial", on_click=lambda e: page.go("/")),
-            ft.TextButton(text="Votações"),
+            ft.TextButton(text="Votações", on_click=lambda e: page.go("/votacoes")),
             ft.TextButton(text="Instalar App", on_click=lambda e: page.go("/instalar")),
-            ft.TextButton(text="Entrar"),
+            ft.TextButton(text="Entrar", on_click=lambda e: page.go("/entrar")),
         ],
     )
 
@@ -218,9 +218,9 @@ def tela_inicial(page: ft.Page) -> ft.View:
             center_title=False,
             actions=[
                 ft.TextButton(text="Tela Inicial", on_click=lambda e: page.go("/")),
-                ft.TextButton(text="Votações"),
+                ft.TextButton(text="Votações", on_click=lambda e: page.go("/votacoes")),
                 ft.TextButton(text="Instalar App", on_click=lambda e: page.go("/instalar")),
-                ft.TextButton(text="Entrar"),
+                ft.TextButton(text="Entrar", on_click=lambda e: page.go("/entrar")),
             ],
         ),
         controls=[
