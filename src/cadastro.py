@@ -62,6 +62,8 @@ def tela_cadastro(page: ft.Page):
             text_style=ft.TextStyle(weight=ft.FontWeight.BOLD)
             ))
     
+    registrar.on_click = lambda e: page.go("/entrar")
+    
     container_titulo = ft.Container(
         content=ft.Column([titulo, subtitulo, registrar], spacing=25, alignment=ft.MainAxisAlignment.CENTER, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
         # padding=200,

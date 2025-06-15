@@ -69,7 +69,17 @@ def tela_inicial(page: ft.Page) -> ft.View:
                                 size=20,
                             ),
                             espacamento2,
-                            ft.OutlinedButton(text="Entrar", width=200),
+                            ft.FilledButton(
+                                text="Entrar",
+                                style=ft.ButtonStyle(
+                                    bgcolor=ft.Colors.ON_SURFACE_VARIANT,  # se adapta bem a temas claros e escuros
+                                    color=ft.Colors.PRIMARY_CONTAINER,
+                                    shape=ft.RoundedRectangleBorder(radius=4),  # cantos levemente arredondados (mude para 0 se quiser 100% quadrado)
+                                    padding=ft.Padding(40, 20, 40, 20),  # aumenta o tamanho (deixa mais quadrado)
+                                    
+                                ),
+                                on_click=lambda e: page.go("/entrar"),
+                            ),
                         ],
                         alignment=ft.MainAxisAlignment.CENTER,
                         horizontal_alignment=ft.CrossAxisAlignment.CENTER,
@@ -106,7 +116,17 @@ def tela_inicial(page: ft.Page) -> ft.View:
             [
                 ft.Text("Verificar votações atuais", size=24, weight=ft.FontWeight.BOLD),
                 votacoes_dinamicas,
-                ft.ElevatedButton(text="Ver Mais", width=200),
+                ft.FilledButton(
+                                text="Ver Mais",
+                                style=ft.ButtonStyle(
+                                    bgcolor=ft.Colors.ON_SURFACE_VARIANT,  # se adapta bem a temas claros e escuros
+                                    color=ft.Colors.PRIMARY_CONTAINER,
+                                    shape=ft.RoundedRectangleBorder(radius=4),  # cantos levemente arredondados (mude para 0 se quiser 100% quadrado)
+                                    padding=ft.Padding(40, 20, 40, 20),  # aumenta o tamanho (deixa mais quadrado)
+                                    
+                                ),
+                                on_click=lambda e: page.go("/votacoes"),
+                            ),
             ],
             horizontal_alignment=ft.CrossAxisAlignment.CENTER,
             spacing=20
