@@ -118,7 +118,9 @@ def main(page: ft.Page):
             'Content-Type': 'application/json'
         }
 
-        for nome_candidato, detalhes_candidato in informacoes_candidatos:
+        for candidatos in informacoes_candidatos:
+            nome_candidato = candidatos.get("nome")
+            detalhes_candidato = candidatos.get("detalhes")
 
             data_candidatos = {
                 "id_votacao": id_votacao,
