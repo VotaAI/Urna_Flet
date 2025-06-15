@@ -108,6 +108,33 @@ def main(page: ft.Page):
         print("Status Code:", response.status_code)
         print("Resposta JSON:", response.json())
 
+        id_votacao = response.json()["id_votacao"]
+
+        url_candidatos = 'https://backend-api-urna.onrender.com/admin/opcoes/'
+
+        header_candidatos = {
+            'accept': 'application/json',
+            'Authorization': f'Bearer {token}', 
+            'Content-Type': 'application/json'
+        }
+
+        for nome_candidato, detalhes_candidato in informacoes_candidatos:
+
+            data_candidatos = {
+                "id_votacao": id_votacao,
+                "titulo": nome_candidato,
+                "detalhes": detalhes_candidato
+            }
+
+            response_candidato = requests.post(
+                url=url_candidatos,
+                headers=header_candidatos,
+                json=data_candidatos
+            )
+
+            print("Status Code:", response_candidato.status_code)
+            print("Resposta JSON:", response_candidato.json())
+
     def funcionalidade_adicionar(e):
         if candidatos_label.value:
             informacoes_candidatos.append({
