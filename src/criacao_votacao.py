@@ -1,5 +1,6 @@
 import flet as ft
 import requests
+from datetime import datetime
 
 informacoes_candidatos = []
 
@@ -18,11 +19,11 @@ def main(page: ft.Page):
 
         novo_texto = ""
         if len(numeros) >= 1:
-            novo_texto += numeros[:4]
+            novo_texto += numeros[:2]
+        if len(numeros) >= 3:
+            novo_texto = numeros[:2] + "/" + numeros[2:4]
         if len(numeros) >= 5:
-            novo_texto = numeros[:4] + "-" + numeros[4:6]
-        if len(numeros) >= 7:
-            novo_texto = numeros[:4] + "-" + numeros[4:6] + "-" + numeros[6:8]
+            novo_texto = numeros[:2] + "/" + numeros[2:4] + "/" + numeros[4:8]
 
         # Atualiza apenas se o texto mudou (pra evitar loop)
         if novo_texto != texto:
@@ -35,11 +36,11 @@ def main(page: ft.Page):
 
         novo_texto = ""
         if len(numeros) >= 1:
-            novo_texto += numeros[:4]
+            novo_texto += numeros[:2]
+        if len(numeros) >= 3:
+            novo_texto = numeros[:2] + "/" + numeros[2:4]
         if len(numeros) >= 5:
-            novo_texto = numeros[:4] + "-" + numeros[4:6]
-        if len(numeros) >= 7:
-            novo_texto = numeros[:4] + "-" + numeros[4:6] + "-" + numeros[6:8]
+            novo_texto = numeros[:2] + "/" + numeros[2:4] + "/" + numeros[4:8]
 
         # Atualiza apenas se o texto mudou (pra evitar loop)
         if novo_texto != texto:
@@ -49,7 +50,7 @@ def main(page: ft.Page):
     
 
     def obter_token(username, password):
-        url = "https://backend-api-urna.onrender.com/token"
+        url = "https://backend-api-urna.onrender.com/login"
 
         payload = {
             "username": username,
@@ -70,15 +71,22 @@ def main(page: ft.Page):
         else:
             return None
 
-    # token = obter_token("email", "senha")
+    token = obter_token("email", "senha")
 
 
     def criar_votacao(e):
+
+        # Converter string para objeto datetime
+        datetime_1,datetime_2 = datetime.strptime(periodo_inicio_label.value, "%d/%m/%Y"), datetime.strptime(periodo_termino_label.value, "%d/%m/%Y")
+
+        # Converter para formato ISO 8601 (com Z para indicar UTC, se quiser)
+        data_iso_inicio, data_iso_fim = datetime_1.isoformat() + "Z", datetime_2.isoformat() + "Z"
+
         url = 'https://backend-api-urna.onrender.com/admin/votacoes/'
 
         header = {
             'accept': 'application/json',
-            'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjgiLCJlbWFpbCI6ImVtYWlsIiwidXNlcl90eXBlIjoiYWRtaW4iLCJub21lX2NvbXBsZXRvIjoibm9tZSIsImV4cCI6MTc1MDAxMzc5Nn0.80VEo-n5hWhBxOtS1jFvAzbyT7DReIwWYlOpjbSIHq4',
+            'Authorization': f'Bearer {token}',
             'Content-Type': 'application/json'
         }
 
@@ -87,8 +95,8 @@ def main(page: ft.Page):
             "descricao": descricao_label.value,
             "status": "aberta",
             "permite_candidatura": permitir,
-            "data_inicio": periodo_inicio_label.value,
-            "data_fim": periodo_termino_label.value
+            "data_inicio": data_iso_inicio,
+            "data_fim": data_iso_fim
             }
         
         response = requests.post(
@@ -312,11 +320,11 @@ def main(page: ft.Page):
     candidaturas_container = ft.Container(content=ft.Column([candidaturas, candidaturas_btn_container, descricao_candidatura], spacing=1)) 
 
     periodo_inicio = ft.Text("Data de Início", size=18, opacity=1, color="#ffffff")
-    periodo_inicio_label = ft.TextField(disabled=False, bgcolor="#FFFFFF", opacity=1, color="#000000", border_radius=10, border_color="#352A2A", on_change=formatar_data_inicio, hint_text="yyyy-mm-dd")
+    periodo_inicio_label = ft.TextField(disabled=False, bgcolor="#FFFFFF", opacity=1, color="#000000", border_radius=10, border_color="#352A2A", on_change=formatar_data_inicio, hint_text="dd-mm-yyyy")
     periodo_inicio_container = ft.Container(content=ft.Column([periodo_inicio, periodo_inicio_label], spacing=1))
 
     periodo_termino = ft.Text("Data de Término", size=18, opacity=1, color="#ffffff")
-    periodo_termino_label = ft.TextField(disabled=False, bgcolor="#ffffff", opacity=1, color="#000000", border_radius=10, border_color="#352A2A", on_change=formatar_data_termino, hint_text="yyyy-mm-dd")
+    periodo_termino_label = ft.TextField(disabled=False, bgcolor="#ffffff", opacity=1, color="#000000", border_radius=10, border_color="#352A2A", on_change=formatar_data_termino, hint_text="dd-mm-yyyy")
     periodo_termino_container = ft.Container(content=ft.Column([periodo_termino, periodo_termino_label], spacing=1))
 
     candidatos = ft.Text("Registrar opção/candidato", size=18, color="#FFFFFF")
