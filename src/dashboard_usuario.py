@@ -1,6 +1,24 @@
 import flet as ft
+import requests
 
 def tela_dashboard_usuario(page: ft.Page):
+
+    id = page.client_storage.get("user_id")
+    token = page.client_storage.get("token")
+
+    headers = {
+        "Authorization": f"Bearer {token}"
+    }
+
+    url = f"https://backend-api-urna.onrender.com/users/{id}"
+
+    response = requests.get(url, headers=headers)
+
+    if response.status_code == 200:
+        dados_usuario = response.json()
+        print(dados_usuario)
+    else:
+        print("Erro ao buscar dados:", response.status_code)
 
 
     # ESPAÇAMENTOS
@@ -303,10 +321,7 @@ def tela_dashboard_usuario(page: ft.Page):
             title=ft.Text("VotaAÍ"),
             center_title=False,
             actions=[
-                ft.TextButton(text="Tela Inicial", on_click=lambda e: page.go("/")),
-                ft.TextButton(text="Votações", on_click=lambda e: page.go("/votacoes")),
-                ft.TextButton(text="Instalar", on_click=lambda e: page.go("/instalar")),
-                ft.TextButton(text="Entrar", on_click=lambda e: page.go("/entrar")),
+                ft.TextButton(text="Tela Inicial", on_click=lambda e: page.go("/dashboard_usuario")),
             ],
         ),
         controls=[
