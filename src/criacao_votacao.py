@@ -1,5 +1,6 @@
 import flet as ft
 import requests
+from datetime import datetime
 
 informacoes_candidatos = []
 
@@ -18,11 +19,11 @@ def main(page: ft.Page):
 
         novo_texto = ""
         if len(numeros) >= 1:
-            novo_texto += numeros[:4]
+            novo_texto += numeros[:2]
+        if len(numeros) >= 3:
+            novo_texto = numeros[:2] + "/" + numeros[2:4]
         if len(numeros) >= 5:
-            novo_texto = numeros[:4] + "-" + numeros[4:6]
-        if len(numeros) >= 7:
-            novo_texto = numeros[:4] + "-" + numeros[4:6] + "-" + numeros[6:8]
+            novo_texto = numeros[:2] + "/" + numeros[2:4] + "/" + numeros[4:8]
 
         # Atualiza apenas se o texto mudou (pra evitar loop)
         if novo_texto != texto:
@@ -35,11 +36,11 @@ def main(page: ft.Page):
 
         novo_texto = ""
         if len(numeros) >= 1:
-            novo_texto += numeros[:4]
+            novo_texto += numeros[:2]
+        if len(numeros) >= 3:
+            novo_texto = numeros[:2] + "/" + numeros[2:4]
         if len(numeros) >= 5:
-            novo_texto = numeros[:4] + "-" + numeros[4:6]
-        if len(numeros) >= 7:
-            novo_texto = numeros[:4] + "-" + numeros[4:6] + "-" + numeros[6:8]
+            novo_texto = numeros[:2] + "/" + numeros[2:4] + "/" + numeros[4:8]
 
         # Atualiza apenas se o texto mudou (pra evitar loop)
         if novo_texto != texto:
@@ -49,7 +50,7 @@ def main(page: ft.Page):
     
 
     def obter_token(username, password):
-        url = "https://backend-api-urna.onrender.com/token"
+        url = "https://backend-api-urna.onrender.com/login"
 
         payload = {
             "username": username,
@@ -62,23 +63,29 @@ def main(page: ft.Page):
 
         response = requests.post(url, data=payload, headers=headers)
 
-        # print("Status:", response.status_code)
-        # print("Resposta:", response.text)
+        #print("Status:", response.status_code)
+        #print("Resposta:", response.text)
 
         if response.status_code == 200:
             return response.json()["access_token"]
         else:
             return None
 
-    # token = obter_token("email", "senha")
-
+    token = obter_token("email", "senha")
 
     def criar_votacao(e):
+
+        # Converter string para objeto datetime
+        datetime_1,datetime_2 = datetime.strptime(periodo_inicio_label.value, "%d/%m/%Y"), datetime.strptime(periodo_termino_label.value, "%d/%m/%Y")
+
+        # Converter para formato ISO 8601 (com Z para indicar UTC, se quiser)
+        data_iso_inicio, data_iso_fim = datetime_1.isoformat() + "Z", datetime_2.isoformat() + "Z"
+
         url = 'https://backend-api-urna.onrender.com/admin/votacoes/'
 
         header = {
             'accept': 'application/json',
-            'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjgiLCJlbWFpbCI6ImVtYWlsIiwidXNlcl90eXBlIjoiYWRtaW4iLCJub21lX2NvbXBsZXRvIjoibm9tZSIsImV4cCI6MTc1MDAxMzc5Nn0.80VEo-n5hWhBxOtS1jFvAzbyT7DReIwWYlOpjbSIHq4',
+            'Authorization': f'Bearer {token}',
             'Content-Type': 'application/json'
         }
 
@@ -87,8 +94,8 @@ def main(page: ft.Page):
             "descricao": descricao_label.value,
             "status": "aberta",
             "permite_candidatura": True,
-            "data_inicio": "2025-06-15",
-            "data_fim": "2025-07-15"
+            "data_inicio": data_iso_inicio,
+            "data_fim": data_iso_fim
             }
         
         response = requests.post(
