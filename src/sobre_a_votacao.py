@@ -1,4 +1,5 @@
 import flet as ft
+import requests
 
 def main(page: ft.Page):
     page.title = "Vota AÍ"
@@ -17,6 +18,11 @@ def main(page: ft.Page):
         ],
     )
 
+    id_votacao = 1
+
+    detalhes_votacao = requests.get(f"https://backend-api-urna.onrender.com/votacoes/{id_votacao}").json()
+    opcoes_disponiveis = requests.get(f"https://backend-api-urna.onrender.com/votacoes/{id_votacao}/opcoes").json()
+
     # ESPAÇAMENTOS
     espacamento = ft.Container(height=100)  # Espaçamento entre seções
     espacamento2 = ft.Container(height=20)  # Espaçamento entre seções
@@ -26,9 +32,6 @@ def main(page: ft.Page):
     # INICIO DA PARTE ESSENCIAL PRO BACK END
 
     # TABELA DE CANDIDATOS
-    candidatos_nome = ["Candidato A", "Candidato B", "Candidato C"]
-    numero_candidato = ["001", "002", "003"]
-
     candidatos_disponiveis = ft.DataTable(
         columns=[
             ft.DataColumn(ft.Text("Candidato")),
@@ -37,23 +40,23 @@ def main(page: ft.Page):
         rows=[
             ft.DataRow(
                 cells=[
-                    ft.DataCell(ft.Text(candidato)),
-                    ft.DataCell(ft.Text(numero)),
+                    ft.DataCell(ft.Text(candidato["titulo"])),
+                    ft.DataCell(ft.Text(candidato["id_opcao"])),
                 ]
             )
-            for candidato, numero in zip(candidatos_nome, numero_candidato)
+            for candidato in opcoes_disponiveis
         ]
     )
 
     # DICIONÁRIO COM INFORMAÇÕES SOBRE A VOTAÇÃO
     sobre_a_votacao = {
-        "titulo": "Votação de Representantes", 
-        "inicio": "01/06/2025",
-        "fim": "31/06/2025",
-        "descricao": "Participe da votação para escolher os representantes do nosso projeto. Vote no candidato de sua preferência digitando o número correspondente.",
-        "status": "Aberta",
-        "categoria": "Educação",
-        "permite_candidatura": True,
+        "titulo": detalhes_votacao["titulo"], 
+        "inicio": detalhes_votacao["data_inicio"],
+        "fim": detalhes_votacao["data_fim"],
+        "descricao": detalhes_votacao["descricao"],
+        "status": detalhes_votacao["status"].title(),
+        # "categoria": "Educação",
+        "permite_candidatura": detalhes_votacao["permite_candidatura"],
     }
 
     # FIM DA PARTE ESSENCIAL PRO BACK END
@@ -81,10 +84,10 @@ def main(page: ft.Page):
                                 f"Status: {sobre_a_votacao['status']}",
                                 size=15,
                             ),
-                            ft.Text(
-                                f"Categoria: {sobre_a_votacao['categoria']}",
-                                size=15,
-                            ),
+                            # ft.Text(
+                            #     f"Categoria: {sobre_a_votacao['categoria']}",
+                            #     size=15,
+                            # ),
                             espacamento2,
                         ],
                         alignment=ft.MainAxisAlignment.CENTER,

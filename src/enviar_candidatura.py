@@ -1,5 +1,6 @@
 import flet as ft
 import requests
+from token_decode import decode_jwt_payload
 
 def main(page: ft.Page):
     page.title = "Enviar candidatura"
@@ -15,6 +16,66 @@ def main(page: ft.Page):
                 ft.TextButton(text="Entrar"),
             ],
         )
+
+
+
+
+
+
+    # SEÇÃO LOGIN USADA PARA TESTAR BUSCA DE DADOS
+    # REMOVER DEPOIS
+
+    url = "https://backend-api-urna.onrender.com/login/"
+
+    header = {
+            'accept': 'application/json',
+            'Content-Type': 'application/x-www-form-urlencoded'
+        }
+    
+    payload = f"grant_type=password&username=cpf&password=senha&client_id=&client_secret=&scope="
+    
+    response = requests.post(url=url,
+                            headers=header,
+                            json=payload)
+    
+    print("Status Code:", response.status_code)
+    print("Resposta JSON:", response.json(),"\n\n\n")
+
+    token = response.json()["access_token"]
+
+    # Para salvar:
+    page.client_storage.set("jwt_token", token)
+
+    votacao_id = 1
+
+    result = requests.get(f"https://backend-api-urna.onrender.com/votacoes/{votacao_id}").json()
+
+
+
+
+
+
+
+    # FIM DO LOGIN
+
+    votacao_nome = result["titulo"] if result else "ERRO AO LOCALIZAR VOTACAO"
+
+    print("\n\n\n\n\n\n\n\n\nDHSAKJHSAKDSAJKDHSJKAHDKJSAHDKJASHDKA\n\n\n\n\n\n\n\n")
+
+    token_inicio = page.client_storage.get("jwt_token")
+    if token_inicio != None:
+        print("\n\n\n\n\n\nTOKEN LOCALIZADO NO INICIO DA PAGINA: ", token_inicio,"\n\n\n\n\n\n")
+        token_inicio = decode_jwt_payload(token_inicio)
+        print(token_inicio)
+    else:
+        print("\n\n\n\n\n\nTOKEN NAO LOCALIZADO\n\n\n\n\n\n", token_inicio)
+
+    if token_inicio!=None:
+        id_user_logado = token_inicio["id"]
+        nome_user_logado = token_inicio["nome_completo"]
+    else:
+        id_user_logado = 1
+        nome_user_logado = "ERRO AO BUSCAR USUARIO NO TOKEN"
     
     def enviar_candidatura(e):
         url = "https://backend-api-urna.onrender.com/candidaturas/"
@@ -25,7 +86,7 @@ def main(page: ft.Page):
         }
         
         data = {
-            "id_user": 1, 
+            "id_user": id_user_logado, 
             "id_votacao": 1, 
             "detalhes": descricao_label.value,
             "status": "pendente"
@@ -63,7 +124,7 @@ def main(page: ft.Page):
     )
 
     nome_candidato = ft.Text("Nome", size=18, color="#ffffff")
-    nome_candidato_label = ft.TextField(hint_text="Insira seu nome", bgcolor="#ffffff", color="#000000", border_radius=10, border_color="#352A2A")
+    nome_candidato_label = ft.TextField(hint_text=nome_user_logado, bgcolor="#ffffff", color="#000000", border_radius=10, border_color="#352A2A")
     nome_candidato_container = ft.Container(content=ft.Column([nome_candidato, nome_candidato_label], spacing=1))    
 
     descricao = ft.Text("Descrição/Detalhes", size=18, color="#ffffff")
@@ -71,7 +132,7 @@ def main(page: ft.Page):
     descricao_container = ft.Container(content=ft.Column([descricao, descricao_label], spacing=1))
 
     nome_votacao = ft.Text("Nome da Votação", size=18, color="#ffffff")
-    nome_votacao_label = ft.TextField(hint_text="Votação para presidente - 2025", bgcolor="#ffffff", color="#000000", border_radius=10, border_color="#352A2A")
+    nome_votacao_label = ft.TextField(hint_text=votacao_nome, bgcolor="#ffffff", color="#000000", border_radius=10, border_color="#352A2A")
     nome_votacao_container = ft.Container(content=ft.Column([nome_votacao, nome_votacao_label], spacing=1))
 
     voltar_btn = ft.ElevatedButton(
