@@ -10,7 +10,7 @@ def main(page: ft.Page):
 
     candidatos_card = ft.Column()
 
-    permitir = ""
+    permitir = False
 
     def formatar_data_inicio(e):
         texto = periodo_inicio_label.value
@@ -86,9 +86,9 @@ def main(page: ft.Page):
             "titulo": nome_votacao_label.value,
             "descricao": descricao_label.value,
             "status": "aberta",
-            "permite_candidatura": True,
-            "data_inicio": "2025-06-15",
-            "data_fim": "2025-07-15"
+            "permite_candidatura": permitir,
+            "data_inicio": periodo_inicio_label.value,
+            "data_fim": periodo_termino_label.value
             }
         
         response = requests.post(
@@ -164,6 +164,7 @@ def main(page: ft.Page):
             print("Campo de nome está vazio")
 
     def ativar(e):
+        nonlocal permitir
         # periodo_inicio.opacity = 1
         # periodo_inicio.update()
 
@@ -198,9 +199,10 @@ def main(page: ft.Page):
         print(permitir)
 
         candidaturas_nao_btn.update()
-        return permitir
+        # return permitir
 
     def desativar(e):
+        nonlocal permitir
         # periodo_inicio.opacity = 0.6
         # periodo_inicio.update()
 
@@ -235,7 +237,7 @@ def main(page: ft.Page):
         print(permitir)
 
         candidaturas_sim_btn.update()
-        return permitir
+        # return permitir
 
 
     def ativar_detalhes(e):
