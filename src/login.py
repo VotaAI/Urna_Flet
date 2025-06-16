@@ -8,6 +8,13 @@ def main(page: ft.Page):
     page.bgcolor = "#303030"
     # page.scroll = True
 
+    try:
+        token_inicio = page.client_storage.get("jwt_token")
+        if token_inicio != None:
+            print("\n\n\n\n\n\nTOKEN LOCALIZADO NO INICIO DA PAGINA: ", token_inicio,"\n\n\n\n\n\n")
+    except:
+        print("\n\n\n\n\n\nTOKEN NAO LOCALIZADO\n\n\n\n\n\n\n\n\n")
+
     def login(e):
         url = "https://backend-api-urna.onrender.com/login/"
 
@@ -16,14 +23,25 @@ def main(page: ft.Page):
                 'Content-Type': 'application/x-www-form-urlencoded'
             }
         
-        payload = f"grant_type=password&username={email_cpf_label.value}&password={senha_label.value}&client_id=string&client_secret=string&scope="
+        payload = f"grant_type=password&username={email_cpf_label.value}&password={senha_label.value}&client_id=&client_secret=&scope="
         
         response = requests.post(url=url,
                                 headers=header,
                                 json=payload)
         
         print("Status Code:", response.status_code)
-        print("Resposta JSON:", response.json())
+        print("Resposta JSON:", response.json(),"\n\n\n")
+
+        token = response.json()["access_token"]
+
+        # Para salvar:
+        page.client_storage.set("jwt_token", token)
+
+        # Para recuperar:
+        token_storage = page.client_storage.get("jwt_token")
+
+        print(token_storage)
+
 
     page.appbar = ft.AppBar(
         leading=ft.Icon(ft.Icons.HOW_TO_VOTE),
