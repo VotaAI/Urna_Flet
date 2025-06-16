@@ -1,21 +1,33 @@
 import flet as ft
+import  requests
 
-def main(page: ft.Page):
-    page.title = "Vota AÍ"
-    page.theme_mode = ft.ThemeMode.LIGHT # trocar modo por aqui
-    page.scroll = ft.ScrollMode.AUTO
+def tela_sobre_votacao(page: ft.Page):
 
-    page.appbar = ft.AppBar(
-        leading=ft.Icon(ft.Icons.HOW_TO_VOTE),
-        title=ft.Text("VotaAÍ"),
-        center_title=False,
-        actions=[
-            ft.TextButton(text="Tela Inicial"),
-            ft.TextButton(text="Votações"),
-            ft.TextButton(text="Instalar App"),
-            ft.TextButton(text="Entrar"),
-        ],
-    )
+    id = page.client_storage.get("user_id")
+    token = page.client_storage.get("token")
+    id_votacao = page.client_storage.get("id_votacao")
+    url = f"https://backend-api-urna.onrender.com/votacoes/{id_votacao}"
+    url_votacoes_opcoes = f"https://backend-api-urna.onrender.com/{id_votacao}/opcoes"
+
+    
+
+    headers = {
+        "Authorization": f"Bearer {token}"
+    }
+
+    response = requests.get(url, headers=headers)
+    response_opcoes = requests.get(url_votacoes_opcoes, headers=headers)
+    if response_opcoes.status_code == 200:
+        opcoes_votacao = response_opcoes.json()
+        print(opcoes_votacao)
+    else:
+        print("Erro ao buscar opções de votação:", response_opcoes.status_code)
+
+    if response.status_code == 200:
+        dados_votacao = response.json()
+        print(dados_votacao)
+    else:
+        print("Erro ao buscar dados:", response.status_code)
 
     # ESPAÇAMENTOS
     espacamento = ft.Container(height=100)  # Espaçamento entre seções
@@ -31,17 +43,17 @@ def main(page: ft.Page):
 
     candidatos_disponiveis = ft.DataTable(
         columns=[
-            ft.DataColumn(ft.Text("Candidato")),
-            ft.DataColumn(ft.Text("Numero")),
+            ft.DataColumn(ft.Text("Opção")),
+            ft.DataColumn(ft.Text("Número")),
         ],
         rows=[
             ft.DataRow(
                 cells=[
-                    ft.DataCell(ft.Text(candidato)),
-                    ft.DataCell(ft.Text(numero)),
+                    ft.DataCell(ft.Text("titulo")),
+                    ft.DataCell(ft.Text("id_votacao")),
                 ]
             )
-            for candidato, numero in zip(candidatos_nome, numero_candidato)
+            # for opcao in opcoes_votacao
         ]
     )
 
@@ -67,24 +79,24 @@ def main(page: ft.Page):
                 ft.Container(
                     content=ft.Column(
                         [
-                            ft.Text(F"{sobre_a_votacao['titulo']}", size=30, weight=ft.FontWeight.BOLD),
+                            ft.Text(F"{dados_votacao['titulo']}", size=30, weight=ft.FontWeight.BOLD),
                             espacamento2,
                             ft.Text(
-                                f"Início: {sobre_a_votacao['inicio']} - Fim: {sobre_a_votacao['fim']}",
+                                f"Início: {dados_votacao['data_inicio']} - Fim: {dados_votacao['data_fim']}",
                                 size=15,
                             ),
                             ft.Text(
-                                f"Descrição: {sobre_a_votacao['descricao']}",
+                                f"Descrição: {dados_votacao['descricao']}",
                                 size=15,
                             ),
                             ft.Text(
-                                f"Status: {sobre_a_votacao['status']}",
+                                f"Status: {dados_votacao['status']}",
                                 size=15,
                             ),
-                            ft.Text(
-                                f"Categoria: {sobre_a_votacao['categoria']}",
-                                size=15,
-                            ),
+                            #ft.Text(
+                             #   f"Categoria: {sobre_a_votacao['categoria']}",
+                             #   size=15,
+                            #),
                             espacamento2,
                         ],
                         alignment=ft.MainAxisAlignment.CENTER,
@@ -145,9 +157,18 @@ def main(page: ft.Page):
     )
 
     # PÁGINA FINAL
-    page.add(
-        ft.Column(
-            [
+
+    return ft.View(
+        route="/sobre_a_votacao",
+        appbar=ft.AppBar(
+            leading=ft.Icon(ft.Icons.HOW_TO_VOTE),
+            title=ft.Text("VotaAÍ"),
+            center_title=False,
+            actions=[
+                ft.TextButton(text="Tela Inicial", on_click=lambda e: page.go("/dashboard_usuario")),
+            ],
+        ),
+        controls=[
                 espacamento,
                 container_inicial,
                 espacamento2,
@@ -155,12 +176,6 @@ def main(page: ft.Page):
                 espacamento,
                 espacamento2,
                 footer,
-            ],
-            expand=True,
-            scroll=ft.ScrollMode.AUTO,
-            alignment=ft.MainAxisAlignment.START,
-            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-        )
+        ],
+        scroll=ft.ScrollMode.AUTO
     )
-
-ft.app(target=main)

@@ -5,6 +5,9 @@ def tela_dashboard_usuario(page: ft.Page):
 
     id = page.client_storage.get("user_id")
     token = page.client_storage.get("token")
+    id_votacao = "teste"
+    id_votacao = page.client_storage.get("id_votacao")
+    page.client_storage.remove("id_votacao")
 
     headers = {
         "Authorization": f"Bearer {token}"
@@ -87,7 +90,24 @@ def tela_dashboard_usuario(page: ft.Page):
     
     # CRIAÇÃO DO CARTÃO VOTAÇÃO ATUAL
     # A LOGICA QUE USEI FOI UM CARTÃO INDIVIDUAL, PROVAVELMENTE ALTERAR AO COLOCAR O BANCO DE DADOS
-    cartao_votacao_atual = ft.Container(
+    
+    # pegando votacoes atuais da api
+
+    def ir_tela_votacao(id_votacao):
+            page.client_storage.set("id_votacao", id_votacao)
+            page.go(f"/sobre_a_votacao")
+    
+    def gerar_callback_ir_tela(id_votacao):
+        return lambda e: ir_tela_votacao(id_votacao)
+
+
+    json_votacoes_abertas = requests.get("https://backend-api-urna.onrender.com/votacoes/open?limit=10&offset=0").json()
+    lista = []
+
+    for votacao in json_votacoes_abertas:
+        id_votacao = votacao['id_votacao']
+        print(f"ID da Votação: {id_votacao}")  # Debugging para verificar o ID da votação
+        cartao_votacao_atual = ft.Container(
                     content=ft.ResponsiveRow(
                         [
                             ft.Container(
@@ -98,9 +118,9 @@ def tela_dashboard_usuario(page: ft.Page):
                             ft.Container(
                                 content=ft.Column(
                                     [
-                                        ft.Text("Votação para novo Representante", weight=ft.FontWeight.BOLD),
-                                        ft.Text("Período: 30/05/2025 até 06/06/2025."),
-                                        ft.Text("Descrição: Votação para eleição do novo Representante de Classe."),
+                                        ft.Text(f"Título: {votacao['titulo']}.", weight=ft.FontWeight.BOLD),
+                                        ft.Text(f"Período: {votacao['data_inicio']} até {votacao['data_fim']}."),
+                                        ft.Text(f"Descrição: {votacao['descricao']}."),
                                     ]
                                 ),
                                 expand=True,
@@ -131,7 +151,7 @@ def tela_dashboard_usuario(page: ft.Page):
                                                 bgcolor=ft.Colors.ON_SURFACE_VARIANT,  # se adapta bem a temas claros e escuros
                                                 color=ft.Colors.ON_TERTIARY,
                                                 shape=ft.RoundedRectangleBorder(radius=4),  # cantos levemente arredondados (mude para 0 se quiser 100% quadrado)
-                                                ),),
+                                                ), on_click=gerar_callback_ir_tela(id_votacao)),
                                             ]
                                         ),
                                     ],
@@ -146,6 +166,17 @@ def tela_dashboard_usuario(page: ft.Page):
                     width=1500,  # <-- Aqui você define a "largura máxima"
                     alignment=ft.alignment.center,  # <-- Aqui centraliza horizontalmente
                 )
+        cartao_votacao_atual.border = ft.border.all(0.5, ft.Colors.GREY_500)
+        lista.append(cartao_votacao_atual)
+
+    
+        
+
+    votacoes_dinamicas = ft.Container(
+        content=ft.Column(lista, spacing=20),
+        padding=20,
+        alignment=ft.alignment.center
+    )
     
     # FIM DA PARTE ESSENCIAL PRO BACK END
     #################################### -------------------------- ######################################
@@ -234,7 +265,7 @@ def tela_dashboard_usuario(page: ft.Page):
     
 
     # VOTAÇÕES ATUAIS
-    votacoes_atuais = ft.Container(
+    votacoes_atuais_titulo = ft.Container(
         content=ft.ResponsiveRow(
             [
                 ft.Container(col={"lg": 2}),
@@ -243,7 +274,7 @@ def tela_dashboard_usuario(page: ft.Page):
                         [
                             ft.Text("Votações Atuais", size=30, weight=ft.FontWeight.BOLD),
                             espacamento2,
-                            cartao_votacao_atual,
+                            votacoes_dinamicas,
                         ],
                         alignment=ft.MainAxisAlignment.CENTER,
                         horizontal_alignment=ft.CrossAxisAlignment.START,
@@ -293,27 +324,6 @@ def tela_dashboard_usuario(page: ft.Page):
     cartao_vencedor.border = ft.border.all(0.5, ft.Colors.GREY_500)
     cartao_votacao_atual.border = ft.border.all(0.5, ft.Colors.GREY_500)
 
-
-
-    # PÁGINA FINAL
-    teste = page.add(
-        ft.Column(
-            [
-                container_inicial,
-                espacamento, # 
-                container_votacao_fechada,
-                espacamento,  
-                votacoes_atuais,
-                espacamento,
-                footer,
-            ],
-            expand=True,
-            scroll=ft.ScrollMode.AUTO,
-            alignment=ft.MainAxisAlignment.START,
-            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-        )
-    )
-
     return ft.View(
         route="/dashboard_usuario",
         appbar=ft.AppBar(
@@ -329,7 +339,7 @@ def tela_dashboard_usuario(page: ft.Page):
                 espacamento, # Espaçamento entre seções
                 container_votacao_fechada,
                 espacamento,  # Espaçamento entre seções
-                votacoes_atuais,
+                votacoes_atuais_titulo,
                 espacamento,
                 footer,
         ],

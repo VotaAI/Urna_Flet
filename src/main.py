@@ -37,6 +37,9 @@ def main(page: ft.Page):
                 page.views.append(tela_dashboard_admin(page))
             else:
                 page.go("/entrar")
+        elif rota == "/sobre_a_votacao":
+            from sobre_a_votacao import tela_sobre_votacao
+            page.views.append(tela_sobre_votacao(page))
 
         page.update()  # <- importante que fique no final
 
