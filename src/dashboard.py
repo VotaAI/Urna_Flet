@@ -1,9 +1,121 @@
 import flet as ft
+import requests
 
 def main(page: ft.Page):
     page.title = "Vota AÍ"
     page.theme_mode = ft.ThemeMode.LIGHT # trocar modo por aqui
     page.scroll = ft.ScrollMode.AUTO
+
+
+
+
+
+    def login():
+        url = "https://backend-api-urna.onrender.com/login"
+
+        payload = {
+            "username": "string",
+            "password": "string"
+        }
+
+        headers = {
+            "Content-Type": "application/x-www-form-urlencoded"
+        }
+
+        response = requests.post(url, data=payload, headers=headers)
+
+        # print("Status:", response.status_code)
+        # print("Resposta:", response.text)
+
+        if response.status_code == 200:
+            return response.json()
+        else:
+            return None
+
+    login = login()
+
+
+    if login:
+        token, user_type = login["access_token"], login["user"]["user_type"]
+    else:
+        token, user_type = None
+
+
+
+
+    def aprovar_candidatura(id_candidatura, detalhes):
+        url = f"https://backend-api-urna.onrender.com/admin/candidaturas/{id_candidatura}"
+
+        payload = {
+            "detalhes": detalhes or "",
+            "status": "aprovada"
+        }
+
+        headers = {
+            'accept': 'application/json',
+            'Authorization': f'Bearer {token}',
+            'Content-Type': 'application/json'
+        }
+
+        response = requests.put(url, json=payload, headers=headers)
+
+        print("Status:", response.status_code)
+        print("Resposta:", response.text)
+
+
+
+
+
+    def recusar_candidatura(id_candidatura, detalhes):
+        url = f"https://backend-api-urna.onrender.com/admin/candidaturas/{id_candidatura}"
+
+        payload = {
+            "detalhes": detalhes or "",
+            "status": "recusada"
+        }
+
+        headers = {
+            'accept': 'application/json',
+            'Authorization': f'Bearer {token}',
+            'Content-Type': 'application/json'
+        }
+
+        response = requests.put(url, json=payload, headers=headers)
+
+        print("Status:", response.status_code)
+        print("Resposta:", response.text)
+
+
+
+
+    def aprovar_todos():
+        print("\n\n\n\n\nAPROVANDO TODOS BRRRRRRRRRRRRRRRR")
+        for candidato in candidatos_pendentes_api:
+            aprovar_candidatura(candidato["id_candidatura"], candidato["detalhes"])
+
+
+
+
+    def rejeitar_todos():
+        for candidato in candidatos_pendentes_api:
+            url = f"https://backend-api-urna.onrender.com/admin/candidaturas/{candidato['id_candidatura']}"
+
+            payload = {
+                "detalhes": candidato['detalhes'] or "",
+                "status": "recusada"
+            }
+
+            headers = {
+                'accept': 'application/json',
+                'Authorization': f'Bearer {token}',
+                'Content-Type': 'application/json'
+            }
+
+            response = requests.put(url, json=payload, headers=headers)
+
+            print("Status:", response.status_code)
+            print("Resposta:", response.text)
+
 
     page.appbar = ft.AppBar(
         leading=ft.Icon(ft.Icons.HOW_TO_VOTE),
@@ -16,6 +128,26 @@ def main(page: ft.Page):
             ft.TextButton(text="Entrar"),
         ],
     )
+
+
+
+
+
+
+    candidatos_aprovados_api = requests.get("https://backend-api-urna.onrender.com/candidaturas/aprovadas?limit=3&offset=0").json()
+
+    candidatos_recusados_api = requests.get("https://backend-api-urna.onrender.com/candidaturas/recusadas?limit=3&offset=0").json()
+
+    candidatos_pendentes_api = requests.get("https://backend-api-urna.onrender.com/candidaturas/pendentes?limit=3&offset=0").json()
+
+    votacoes_fechadas_api = requests.get("https://backend-api-urna.onrender.com/votacoes/closed?limit=3&offset=0").json()
+
+    votacoes_abertas_api = requests.get("https://backend-api-urna.onrender.com/votacoes/open?limit=3&offset=0").json()
+
+
+
+
+
 
     # ESPAÇAMENTOS
     espacamento = ft.Container(height=100)  # Espaçamento entre seções
@@ -96,34 +228,7 @@ def main(page: ft.Page):
                     alignment=ft.alignment.center,  # <-- Aqui centraliza horizontalmente
                 )
 
-    # DICIONÁRIO COM INFORMAÇÕES SOBRE A VOTAÇÃO
-    votacao_aberta_sobre_a_votacao = {
-        "titulo": "Votação de Representantes", 
-        "inicio": "01/06/2025",
-        "fim": "31/06/2025",
-        "descricao": "Participe da votação para escolher os representantes do nosso projeto. Vote no candidato de sua preferência digitando o número correspondente.",
-        "status": "Aberta",
-        "categoria": "Educação",
-        "permite_candidatura": True,
-    }
 
-    votacao_fechada_sobre_a_votacao = {
-        "titulo": "Votação de Representantes - Anterior", 
-        "inicio": "01/01/2025",
-        "fim": "31/01/2025",
-        "descricao": "Votação de representabtes do primeiro semestre de 2025.",
-        "status": "Fechada",
-        "categoria": "Educação",
-        "permite_candidatura": False,
-    }
-
-    # candidatos pendentes
-
-    candidatos_pendentes = [
-        {"nome": "Candidato A", "numero": "001", "descricao": "Partido X","cpf": "123.456.789-00"},
-        {"nome": "Candidato B", "numero": "002", "descricao": "Partido Y", "cpf": "987.654.321-00"},
-        {"nome": "Candidato C", "numero": "003", "descricao": "Partido Z", "cpf": "456.789.123-00"},
-    ]
 
 
     
@@ -170,66 +275,68 @@ def main(page: ft.Page):
         text_align=ft.TextAlign.START,
     )
 
-    cartao_votacao_atual = ft.Container(
-                    content=ft.ResponsiveRow(
-                        [
-                            ft.Container(
-                                width=60,
-                                height=60,
-                                bgcolor=ft.Colors.GREY_300,
-                            ),
-                            ft.Container(
-                                content=ft.Column(
-                                    [
-                                        ft.Text(f"{votacao_aberta_sobre_a_votacao['titulo']}", weight=ft.FontWeight.BOLD, size=20),
-                                        ft.Text(f"Período: {votacao_aberta_sobre_a_votacao['inicio']} até {votacao_aberta_sobre_a_votacao['fim']}."),
-                                        ft.Text(f"Descrição: {votacao_aberta_sobre_a_votacao['descricao']}"),
-                                    ]
-                                ),
-                                expand=True,
-                                padding=10,
-                            ),
-                            ft.Container(
-                                content=ft.Row(
-                                    [
-                                        ft.FilledButton(
-                                            text="STATUS",
-                                            style=ft.ButtonStyle(
-                                                bgcolor=ft.Colors.ON_SURFACE_VARIANT,  # se adapta bem a temas claros e escuros
-                                                color=ft.Colors.PRIMARY_CONTAINER,
-                                                shape=ft.RoundedRectangleBorder(radius=4),  # cantos levemente arredondados (mude para 0 se quiser 100% quadrado)
-                                                padding=ft.Padding(40, 20, 40, 20),  # aumenta o tamanho (deixa mais quadrado)
-                                                
-                                            ),
-                                            on_click=lambda e: print("Baixar CSV clicado!"),
-                                            width=200,
-                                        ),
-                                        ft.FilledButton(
-                                        text="EXCLUIR",
-                                            style=ft.ButtonStyle(
-                                                bgcolor=ft.Colors.ON_SURFACE_VARIANT,  # se adapta bem a temas claros e escuros
-                                                color=ft.Colors.PRIMARY_CONTAINER,
-                                                shape=ft.RoundedRectangleBorder(radius=4),  # cantos levemente arredondados (mude para 0 se quiser 100% quadrado)
-                                                padding=ft.Padding(40, 20, 40, 20),  # aumenta o tamanho (deixa mais quadrado)
-                                                
-                                            ),
-                                            on_click=lambda e: print("Baixar CSV clicado!"),
-                                            width=200,
-                                        ),
-                                    ]
-                                ),
-                                expand=True,
-                                padding=10,
-                            ),
-                        ],
-                        alignment=ft.MainAxisAlignment.START,
-                        vertical_alignment=ft.CrossAxisAlignment.CENTER,
+    cartoes_votacoes = []
+
+    for votacao in votacoes_abertas_api:
+        cartao = ft.Container(
+            content=ft.ResponsiveRow(
+                [
+                    ft.Container(
+                        width=60,
+                        height=60,
+                        bgcolor=ft.Colors.GREY_300,
                     ),
-                    border_radius=10,
-                    padding=15,
-                    width=1000,  # <-- Aqui você define a "largura máxima"
-                    alignment=ft.alignment.center,  # <-- Aqui centraliza horizontalmente
-                )
+                    ft.Container(
+                        content=ft.Column(
+                            [
+                                ft.Text(f"{votacao['titulo']}", weight=ft.FontWeight.BOLD, size=20),
+                                ft.Text(f"Período: {votacao['data_inicio']} até {votacao['data_fim']}."),
+                                ft.Text(f"Descrição: {votacao['descricao']}"),
+                            ]
+                        ),
+                        expand=True,
+                        padding=10,
+                    ),
+                    ft.Container(
+                        content=ft.Row(
+                            [
+                                ft.FilledButton(
+                                    text="Detalhes",
+                                    style=ft.ButtonStyle(
+                                        bgcolor=ft.Colors.ON_SURFACE_VARIANT,
+                                        color=ft.Colors.PRIMARY_CONTAINER,
+                                        shape=ft.RoundedRectangleBorder(radius=4),
+                                        padding=ft.Padding(40, 20, 40, 20),
+                                    ),
+                                    on_click=lambda e, titulo=votacao['titulo']: print(f"Status de {titulo}"),
+                                    width=200,
+                                ),
+                            ]
+                        ),
+                        expand=True,
+                        padding=10,
+                    ),
+                ],
+                alignment=ft.MainAxisAlignment.START,
+                vertical_alignment=ft.CrossAxisAlignment.CENTER,
+            ),
+            border_radius=10,
+            padding=15,
+            width=1000,
+            alignment=ft.alignment.center,
+            margin=10,  # <-- Isso aqui separa visualmente os cartões
+            border=ft.border.all(1, ft.Colors.GREY_500),  # <-- Adiciona uma borda ao redor
+        )
+
+        cartoes_votacoes.append(cartao)
+
+
+    cartao_votacao_atual =ft.Column(
+            cartoes_votacoes,
+            scroll=ft.ScrollMode.AUTO,  # Se quiser scrollável
+        )
+
+
     # BOTÃO CRIAR VOTAÇÃO
     botao_criar_votacao = ft.FilledButton(
                                         text="CRIAR VOTAÇÃO",
@@ -244,6 +351,24 @@ def main(page: ft.Page):
                                             width=1000,
                                         )
     
+
+
+    botao_ver_mais = ft.FilledButton(
+                                        text="Ver Mais",
+                                            style=ft.ButtonStyle(
+                                                bgcolor=ft.Colors.ON_SURFACE_VARIANT,  # se adapta bem a temas claros e escuros
+                                                color=ft.Colors.PRIMARY_CONTAINER,
+                                                shape=ft.RoundedRectangleBorder(radius=4),  # cantos levemente arredondados (mude para 0 se quiser 100% quadrado)
+                                                padding=ft.Padding(20, 20, 20, 20),  # aumenta o tamanho (deixa mais quadrado)
+                                                
+                                            ),
+                                            on_click=lambda e: print("Baixar CSV clicado!"),
+                                            width=230,
+                                        )
+
+
+
+
     # CONTAINER VOTAÇÕES FECHADAS
     titulo_votacoes_fechadas = ft.Text(
         "Votações Fechadas",
@@ -252,66 +377,67 @@ def main(page: ft.Page):
         text_align=ft.TextAlign.START,
     )
 
-    cartao_votacao_fechada = ft.Container(
-                    content=ft.ResponsiveRow(
-                        [
-                            ft.Container(
-                                width=60,
-                                height=60,
-                                bgcolor=ft.Colors.GREY_300,
-                            ),
-                            ft.Container(
-                                content=ft.Column(
-                                    [
-                                        ft.Text(f"{votacao_fechada_sobre_a_votacao['titulo']}", weight=ft.FontWeight.BOLD, size=20),
-                                        ft.Text(f"Período: {votacao_fechada_sobre_a_votacao['inicio']} até {votacao_aberta_sobre_a_votacao['fim']}."),
-                                        ft.Text(f"Descrição: {votacao_fechada_sobre_a_votacao['descricao']}"),
-                                    ]
-                                ),
-                                expand=True,
-                                padding=10,
-                            ),
-                            ft.Container(
-                                content=ft.Row(
-                                    [
-                                        ft.FilledButton(
-                                            text="STATUS",
-                                            style=ft.ButtonStyle(
-                                                bgcolor=ft.Colors.ON_SURFACE_VARIANT,  # se adapta bem a temas claros e escuros
-                                                color=ft.Colors.PRIMARY_CONTAINER,
-                                                shape=ft.RoundedRectangleBorder(radius=4),  # cantos levemente arredondados (mude para 0 se quiser 100% quadrado)
-                                                padding=ft.Padding(40, 20, 40, 20),  # aumenta o tamanho (deixa mais quadrado)
-                                                
-                                            ),
-                                            on_click=lambda e: print("Baixar CSV clicado!"),
-                                            width=200,
-                                        ),
-                                        ft.FilledButton(
-                                        text="EXCLUIR",
-                                            style=ft.ButtonStyle(
-                                                bgcolor=ft.Colors.ON_SURFACE_VARIANT,  # se adapta bem a temas claros e escuros
-                                                color=ft.Colors.PRIMARY_CONTAINER,
-                                                shape=ft.RoundedRectangleBorder(radius=4),  # cantos levemente arredondados (mude para 0 se quiser 100% quadrado)
-                                                padding=ft.Padding(40, 20, 40, 20),  # aumenta o tamanho (deixa mais quadrado)
-                                                
-                                            ),
-                                            on_click=lambda e: print("Baixar CSV clicado!"),
-                                            width=200,
-                                        ),
-                                    ]
-                                ),
-                                expand=True,
-                                padding=10,
-                            ),
-                        ],
-                        alignment=ft.MainAxisAlignment.START,
-                        vertical_alignment=ft.CrossAxisAlignment.CENTER,
+    cartoes_votacoes_fechadas = []
+
+    for votacao in votacoes_fechadas_api:
+        cartao = ft.Container(
+            content=ft.ResponsiveRow(
+                [
+                    ft.Container(
+                        width=60,
+                        height=60,
+                        bgcolor=ft.Colors.GREY_300,
                     ),
-                    border_radius=10,
-                    padding=15,
-                    width=1000,  # <-- Aqui você define a "largura máxima"
-                    alignment=ft.alignment.center,  # <-- Aqui centraliza horizontalmente
-                )
+                    ft.Container(
+                        content=ft.Column(
+                            [
+                                ft.Text(f"{votacao['titulo']}", weight=ft.FontWeight.BOLD, size=20),
+                                ft.Text(f"Período: {votacao['data_inicio']} até {votacao['data_fim']}."),
+                                ft.Text(f"Descrição: {votacao['descricao']}"),
+                            ]
+                        ),
+                        expand=True,
+                        padding=10,
+                    ),
+                    ft.Container(
+                        content=ft.Row(
+                            [
+                                ft.FilledButton(
+                                    text="Detalhes",
+                                    style=ft.ButtonStyle(
+                                        bgcolor=ft.Colors.ON_SURFACE_VARIANT,
+                                        color=ft.Colors.PRIMARY_CONTAINER,
+                                        shape=ft.RoundedRectangleBorder(radius=4),
+                                        padding=ft.Padding(40, 20, 40, 20),
+                                    ),
+                                    on_click=lambda e, titulo=votacao['titulo']: print(f"Status de {titulo}"),
+                                    width=200,
+                                ),
+                            ]
+                        ),
+                        expand=True,
+                        padding=10,
+                    ),
+                ],
+                alignment=ft.MainAxisAlignment.START,
+                vertical_alignment=ft.CrossAxisAlignment.CENTER,
+            ),
+            border_radius=10,
+            padding=15,
+            width=1000,
+            alignment=ft.alignment.center,
+            margin=10,  # <-- Isso aqui separa visualmente os cartões
+            border=ft.border.all(1, ft.Colors.GREY_500),  # <-- Adiciona uma borda ao redor
+        )
+
+        cartoes_votacoes_fechadas.append(cartao)
+
+
+    cartao_votacao_fechada =ft.Column(
+            cartoes_votacoes_fechadas,
+            scroll=ft.ScrollMode.AUTO,  # Se quiser scrollável
+        )
+        
     
     # CONTAINER CANDIDAOS PENDENTES
 
@@ -343,7 +469,7 @@ def main(page: ft.Page):
                                     shape=ft.RoundedRectangleBorder(radius=6),
                                     padding=ft.Padding(40, 20, 40, 20),
                                 ),
-                                on_click=lambda e: print("Botão 1 clicado"),
+                                on_click=lambda e: rejeitar_todos(),
                             ),
                             col={"lg": 2, "md": 4, "xs": 5},
                             alignment=ft.alignment.center,
@@ -358,7 +484,7 @@ def main(page: ft.Page):
                                     shape=ft.RoundedRectangleBorder(radius=6),
                                     padding=ft.Padding(40, 20, 40, 20),
                                 ),
-                                on_click=lambda e: print("Botão 2 clicado"),
+                                on_click=lambda e: aprovar_todos(),
                             ),
                             col={"lg": 2, "md": 4, "xs": 5},
                             alignment=ft.alignment.center,
@@ -422,28 +548,26 @@ def main(page: ft.Page):
     tabela_candidatos_pendentes = ft.DataTable(
         columns=[
             ft.DataColumn(ft.Text("Candidato")),
-            ft.DataColumn(ft.Text("Número")),
+            ft.DataColumn(ft.Text("Nome da votação")),
             ft.DataColumn(ft.Text("Descrição")),
-            ft.DataColumn(ft.Text("CPF")),
             ft.DataColumn(ft.Text("Ações")),
         ],
         rows=[
             ft.DataRow(
                 cells=[
-                    ft.DataCell(ft.Text(candidato["nome"])),
-                    ft.DataCell(ft.Text(candidato["numero"])),
-                    ft.DataCell(ft.Text(candidato["descricao"])),
-                    ft.DataCell(ft.Text(candidato["cpf"])),
+                    ft.DataCell(ft.Text(candidato["nome_completo"])),
+                    ft.DataCell(ft.Text(candidato["titulo"])),
+                    ft.DataCell(ft.Text(candidato["detalhes"])),
                     ft.DataCell(
                         ft.Row(
                             [
                                 ft.IconButton(
                                     icon=ft.Icons.CHECK,
-                                    on_click=lambda e, c=candidato: print(f"Aprovar {c['nome']}"),
+                                    on_click=lambda e, c=candidato: aprovar_candidatura(c["id_candidatura"], c["detalhes"]),
                                 ),
                                 ft.IconButton(
                                     icon=ft.Icons.CANCEL,
-                                    on_click=lambda e, c=candidato: print(f"Rejeitar {c['nome']}"),
+                                    on_click=lambda e, c=candidato: recusar_candidatura(c["id_candidatura"], c["detalhes"]),
                                 ),
                             ],
                             alignment=ft.MainAxisAlignment.CENTER,
@@ -451,7 +575,7 @@ def main(page: ft.Page):
                     ),
                 ]
             )
-            for candidato in candidatos_pendentes
+            for candidato in candidatos_pendentes_api
         ]
     )
 
@@ -507,34 +631,75 @@ def main(page: ft.Page):
 
 
 
-    # PÁGINA FINAL
-    page.add(
-        ft.Column(
-            [
+
+
+
+    elementos_pagina =  [
                 container_inicial,
                 espacamento,
                 titulo_votacoes,
-                espacamento2,  # Espaçamento entre seções
+                espacamento3,  # Espaçamento entre seções
                 cartao_votacao_atual,
+                botao_ver_mais,
                 espacamento2,  # Espaçamento entre seções
-                botao_criar_votacao,
-                espacamento,  # Espaçamento entre seções
                 titulo_votacoes_fechadas,
                 espacamento2,  # Espaçamento entre seções
                 cartao_votacao_fechada,
-                espacamento,  # Espaçamento entre seções
-                container_candidatos_pendentes,
-                espacamento2,  # Espaçamento entre seções
-                tabela_candidatos_pendentes,
-                espacamento,
-                footer,
-            ],
-            expand=True,
-            scroll=ft.ScrollMode.AUTO,
-            alignment=ft.MainAxisAlignment.START, 
-            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-        )
-    )
+                botao_ver_mais,
+            ]
+
+    if user_type == "admin":
+        elementos_pagina.extend([
+            espacamento2,
+            botao_criar_votacao,
+            espacamento,
+            container_candidatos_pendentes,
+            espacamento
+        ])
+
+    elementos_pagina.extend([espacamento, footer])
+
+    page.add(ft.Column(
+        elementos_pagina,
+        expand=True,
+        scroll=ft.ScrollMode.AUTO,
+        alignment=ft.MainAxisAlignment.START,
+        horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+    ))
+
+
+
+
+
+
+    # PÁGINA FINAL
+    # page.add(
+    #     ft.Column(
+    #         [
+    #             container_inicial,
+    #             espacamento,
+    #             titulo_votacoes,
+    #             espacamento2,  # Espaçamento entre seções
+    #             cartao_votacao_atual,
+    #             espacamento2,  # Espaçamento entre seções
+    #             botao_criar_votacao,
+    #             espacamento,  # Espaçamento entre seções
+    #             titulo_votacoes_fechadas,
+    #             espacamento2,  # Espaçamento entre seções
+    #             cartao_votacao_fechada,
+    #             espacamento,  # Espaçamento entre seções
+    #             container_candidatos_pendentes,
+    #             espacamento2,  # Espaçamento entre seções
+    #             tabela_candidatos_pendentes,
+    #             espacamento,
+    #             footer,
+    #         ],
+    #         expand=True,
+    #         scroll=ft.ScrollMode.AUTO,
+    #         alignment=ft.MainAxisAlignment.START, 
+    #         horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+    #     )
+    # )
 
 ft.app(target=main)
  
