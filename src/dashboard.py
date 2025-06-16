@@ -1,14 +1,12 @@
 import flet as ft
 import requests
 
-def main(page: ft.Page):
+def dashboard(page: ft.Page):
     page.title = "Vota AÍ"
     page.theme_mode = ft.ThemeMode.LIGHT # trocar modo por aqui
     page.scroll = ft.ScrollMode.AUTO
-
-
-
-
+    user_type = page.client_storage.get("user_type")
+    print(f"\n\n\n\n\n\nUSER TYPE: {user_type}\n\n\n\n\n\n")
 
     def login():
         url = "https://backend-api-urna.onrender.com/login"
@@ -36,7 +34,7 @@ def main(page: ft.Page):
 
 
     if login:
-        token, user_type = login["access_token"], login["user"]["user_type"]
+        token, user_type = login["access_token"], user_type
     else:
         token, user_type = None
 
@@ -701,5 +699,25 @@ def main(page: ft.Page):
     #     )
     # )
 
-ft.app(target=main)
+    return ft.View(
+        route="/dashboard",
+        appbar=ft.AppBar(  
+            leading=ft.Icon(ft.Icons.HOW_TO_VOTE),
+            title=ft.Text("VotaAÍ"),
+            center_title=False,
+            actions=[
+                ft.TextButton(text="Tela Inicial", on_click=lambda e: page.go("/dashboard_usuario")),
+            ],
+        ),
+        controls=[ft.Column(
+            elementos_pagina,
+            expand=True,
+            scroll=ft.ScrollMode.AUTO,
+            alignment=ft.MainAxisAlignment.START,
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+            
+        )]
+    )
+
+
  

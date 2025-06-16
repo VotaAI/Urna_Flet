@@ -1,7 +1,7 @@
 import flet as ft
 import requests
 
-def main(page: ft.Page):
+def tela_login(page: ft.Page):
     page.title = "Login"
     page.vertical_alignment = ft.MainAxisAlignment.CENTER  # Centraliza no eixo Y
     page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
@@ -33,6 +33,8 @@ def main(page: ft.Page):
         print("Resposta JSON:", response.json(),"\n\n\n")
 
         token = response.json()["access_token"]
+        user_type = response.json()["user"]["user_type"]
+
 
         # Para salvar:
         page.client_storage.set("jwt_token", token)
@@ -40,7 +42,12 @@ def main(page: ft.Page):
         # Para recuperar:
         token_storage = page.client_storage.get("jwt_token")
 
+        # user type
+        page.client_storage.set("user_type", user_type)
+
         print(token_storage)
+
+        page.go("/votacoes")
 
 
     page.appbar = ft.AppBar(
@@ -68,7 +75,8 @@ def main(page: ft.Page):
             shape=ft.RoundedRectangleBorder(radius=10),
             text_style=ft.TextStyle(weight=ft.FontWeight.BOLD)
             ))
-    
+    registrar.on_click = lambda e: page.go("/cadastrar")
+
     container_titulo = ft.Container(
         content=ft.Column([titulo, subtitulo, registrar], spacing=25, alignment=ft.MainAxisAlignment.CENTER, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
         # padding=200,
@@ -149,4 +157,32 @@ def main(page: ft.Page):
         )
     )
 
-ft.app(main)
+    return ft.View(
+        
+        route="/entrar",
+        appbar=ft.AppBar(
+            leading=ft.Icon(ft.Icons.HOW_TO_VOTE),
+            title=ft.Text("VotaAÍ"),
+            center_title=False,
+            actions=[
+                ft.TextButton(text="Tela Inicial", on_click=lambda e: page.go("/")),
+                ft.TextButton(text="Votações", on_click=lambda e: page.go("/votacoes")),
+                ft.TextButton(text="Instalar", on_click=lambda e: page.go("/instalar")),
+                ft.TextButton(text="Entrar", on_click=lambda e: page.go("/entrar")),
+            ],
+        ),
+        controls=[
+            ft.Column(
+            controls=[
+                ft.Container(
+                    content=linha,
+                    alignment=ft.alignment.center
+                )
+            ],
+            expand=True,
+            alignment=ft.MainAxisAlignment.CENTER,
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER
+        )
+        ],
+        scroll=ft.ScrollMode.AUTO
+    )
