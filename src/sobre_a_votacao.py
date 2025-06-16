@@ -1,7 +1,7 @@
 import flet as ft
 import requests
 
-def main(page: ft.Page):
+def tela_sobre_votacao(page: ft.Page):
     page.title = "Vota AÍ"
     page.theme_mode = ft.ThemeMode.LIGHT # trocar modo por aqui
     page.scroll = ft.ScrollMode.AUTO
@@ -18,11 +18,22 @@ def main(page: ft.Page):
         ],
     )
 
-    id_votacao = 1
+    id_votacao = page.client_storage.get("id_votacao")
 
     detalhes_votacao = requests.get(f"https://backend-api-urna.onrender.com/votacoes/{id_votacao}").json()
     opcoes_disponiveis = requests.get(f"https://backend-api-urna.onrender.com/votacoes/{id_votacao}/opcoes").json()
-    votos_resultados = requests.get(f"https://backend-api-urna.onrender.com/votacoes/{id_votacao}/votos").json()
+    url = f"https://backend-api-urna.onrender.com/votacoes/{id_votacao}/votos"
+    response = requests.get(url)
+
+    print("Status Code votos:", response.status_code)
+    print("Texto da resposta:", response.text)
+
+    if response.status_code == 200 and response.text.strip():
+        votos_resultados = response.json()
+    else:
+        votos_resultados = []
+        print("⚠️ Erro ao buscar votos da votação ou resposta vazia.")
+
 
     print(f"\n\n\n\n\n\n\n{votos_resultados}\n\n\n\n\n")
 
@@ -235,4 +246,34 @@ def main(page: ft.Page):
         )
     )
 
-ft.app(target=main)
+    return ft.View(
+        route="/sobre",
+        appbar=ft.AppBar(
+            leading=ft.Icon(ft.Icons.HOW_TO_VOTE),
+            title=ft.Text("VotaAÍ"),
+            center_title=False,
+            actions=[
+                ft.TextButton(text="Tela Inicial", on_click=lambda e: page.go("/dashboard_usuario")),
+            ],
+        ),
+        controls=[
+                ft.Column(
+                    [
+                        espacamento,
+                        container_inicial,
+                        espacamento2,
+                        container_area_votacao,
+                        espacamento,
+                        espacamento,
+                        tabela_com_votos,
+                        espacamento,
+                        footer,
+                    ],
+                    expand=True,
+                    scroll=ft.ScrollMode.AUTO,
+                    alignment=ft.MainAxisAlignment.START,
+                    horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                )
+        ],
+    
+    )

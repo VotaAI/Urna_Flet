@@ -4,6 +4,7 @@ from dashboard import dashboard
 from tela_downloads import tela_downloads
 from login import tela_login
 from cadastro import tela_cadastro
+
 # se possivel, melhorar essa logica do uso do token e user_type
 
 def main(page: ft.Page):
@@ -24,6 +25,9 @@ def main(page: ft.Page):
             page.views.append(tela_login(page))
         elif rota == "/cadastrar":
             page.views.append(tela_cadastro(page))
+        elif rota == "/sobre":
+            from sobre_a_votacao import tela_sobre_votacao
+            page.views.append(tela_sobre_votacao(page))
 
         page.update()  # <- importante que fique no final
 

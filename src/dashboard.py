@@ -275,7 +275,18 @@ def dashboard(page: ft.Page):
 
     cartoes_votacoes = []
 
+    def ir_tela_votacao(id_votacao):
+            page.client_storage.set("id_votacao", id_votacao)
+            print(f"ID da votação para ir à tela: {id_votacao}")  # Debug: Verifica o ID da votação
+            page.go(f"/sobre")
+    
+    def gerar_callback_ir_tela(id_votacao):
+        print(f"Gerando callback para ID da votação: {id_votacao}")  # Debug: Verifica o ID da votação
+        return lambda e: ir_tela_votacao(id_votacao)
+
     for votacao in votacoes_abertas_api:
+        id_votacao = votacao['id_votacao']  # Pega o ID da votação para usar no botão de detalhes
+        print(f"ID da votação: {id_votacao}")  # Debug: Verifica o ID da votação
         cartao = ft.Container(
             content=ft.ResponsiveRow(
                 [
@@ -306,7 +317,7 @@ def dashboard(page: ft.Page):
                                         shape=ft.RoundedRectangleBorder(radius=4),
                                         padding=ft.Padding(40, 20, 40, 20),
                                     ),
-                                    on_click=lambda e, titulo=votacao['titulo']: print(f"Status de {titulo}"),
+                                    on_click=gerar_callback_ir_tela(id_votacao),
                                     width=200,
                                 ),
                             ]
