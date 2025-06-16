@@ -22,10 +22,73 @@ def main(page: ft.Page):
 
     detalhes_votacao = requests.get(f"https://backend-api-urna.onrender.com/votacoes/{id_votacao}").json()
     opcoes_disponiveis = requests.get(f"https://backend-api-urna.onrender.com/votacoes/{id_votacao}/opcoes").json()
+    votos_resultados = requests.get(f"https://backend-api-urna.onrender.com/votacoes/{id_votacao}/votos").json()
+
+    print(f"\n\n\n\n\n\n\n{votos_resultados}\n\n\n\n\n")
+
+    vencedor_titulo = ''
+    vencedor_votos = 0
+    vencedor_votos_str = '0 Votos'
+
+    def encontrar_votos(titulo):
+        nonlocal vencedor_titulo
+        nonlocal vencedor_votos
+        nonlocal vencedor_votos_str
+
+        for opcao in votos_resultados:
+            print(f"COMPARANDO ENTRE {titulo} E {opcao['id_opcao']}")
+            print(f"Vencedor titulo {vencedor_titulo}, vencedor_votos {vencedor_votos}\n\n\n\n\n")
+            if opcao["id_opcao"] == titulo:
+
+                if opcao["total_votos"] > vencedor_votos:
+                    vencedor_titulo = opcao["id_opcao"]
+                    vencedor_votos, vencedor_votos_str =  opcao["total_votos"], f'{opcao["total_votos"]} Votos'
+
+                elif opcao["total_votos"] == vencedor_votos and vencedor_votos!=0:
+                    vencedor_titulo+= f', e {opcao["id_opcao"]}'
+
+                return opcao["total_votos"]
+        return 0
+
+
+
+    def criar_botao_votar(id_opcao):
+        btn = ft.FilledButton(
+            text="Votar",
+            style=ft.ButtonStyle(
+                bgcolor=ft.Colors.ON_SURFACE_VARIANT,  # se adapta bem a temas claros e escuros
+                color=ft.Colors.PRIMARY_CONTAINER,
+                shape=ft.RoundedRectangleBorder(radius=4),  # cantos levemente arredondados (mude para 0 se quiser 100% quadrado)
+                padding=ft.Padding(10, 10, 10, 10),  # aumenta o tamanho (deixa mais quadrado)
+                
+            ),
+            on_click=lambda e: print("Baixar CSV clicado!"),
+            width=120,
+        )
+        return btn
 
     # ESPAÇAMENTOS
     espacamento = ft.Container(height=100)  # Espaçamento entre seções
     espacamento2 = ft.Container(height=20)  # Espaçamento entre seções
+
+
+    tabela_com_votos = ft.DataTable(
+        columns=[
+            ft.DataColumn(ft.Text("Candidato")),
+            ft.DataColumn(ft.Text("Detalhes")),
+            ft.DataColumn(ft.Text("Quantidade de Votos")),
+        ],
+        rows=[
+            ft.DataRow(
+                cells=[
+                    ft.DataCell(ft.Text(candidato["titulo"])),
+                    ft.DataCell(ft.Text(candidato["detalhes"])),
+                    ft.DataCell(ft.Text(str(encontrar_votos(candidato["titulo"])))),
+                ]
+            )
+            for candidato in opcoes_disponiveis
+        ]
+    )
 
     #################################### -------------------------- ######################################
 
@@ -34,14 +97,18 @@ def main(page: ft.Page):
     # TABELA DE CANDIDATOS
     candidatos_disponiveis = ft.DataTable(
         columns=[
+            ft.DataColumn(ft.Text("Opção")),
             ft.DataColumn(ft.Text("Candidato")),
-            ft.DataColumn(ft.Text("Numero")),
+            ft.DataColumn(ft.Text("Detalhes")),
+            ft.DataColumn(ft.Text("Votar"))
         ],
         rows=[
             ft.DataRow(
                 cells=[
+                    ft.DataCell(ft.Text(str(opcoes_disponiveis.index(candidato)+1))),
                     ft.DataCell(ft.Text(candidato["titulo"])),
-                    ft.DataCell(ft.Text(candidato["id_opcao"])),
+                    ft.DataCell(ft.Text(candidato["detalhes"])),
+                    ft.DataCell(criar_botao_votar(candidato["id_opcao"])),
                 ]
             )
             for candidato in opcoes_disponiveis
@@ -156,7 +223,9 @@ def main(page: ft.Page):
                 espacamento2,
                 container_area_votacao,
                 espacamento,
-                espacamento2,
+                espacamento,
+                tabela_com_votos,
+                espacamento,
                 footer,
             ],
             expand=True,
