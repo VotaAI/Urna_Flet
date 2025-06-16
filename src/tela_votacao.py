@@ -1,9 +1,8 @@
 import flet as ft
-# TODO -> responsividade, esta etranho a posição do teclado, não sei pq... (OK)
-# TODO -> alterar as cores, etc (OK)
+
 def main(page: ft.Page):
     page.title = "Vota AÍ"
-    page.theme_mode = ft.ThemeMode.LIGHT # trocar modo por aqui
+    page.theme_mode = ft.ThemeMode.LIGHT
     page.scroll = ft.ScrollMode.AUTO
 
     page.appbar = ft.AppBar(
@@ -18,13 +17,8 @@ def main(page: ft.Page):
         ],
     )
 
-    # ESPAÇAMENTOS
-    espacamento = ft.Container(height=100)  # Espaçamento entre seções
-    espacamento2 = ft.Container(height=20)  # Espaçamento entre seções
-
-    #################################### -------------------------- ######################################
-
-    # INICIO DA PARTE ESSENCIAL PRO BACK END
+    espacamento = ft.Container(height=100)
+    espacamento2 = ft.Container(height=20)
 
     candidatos_nome = ["Candidato A", "Candidato B", "Candidato C"]
     numero_candidato = ["001", "002", "003"]
@@ -45,10 +39,92 @@ def main(page: ft.Page):
         ]
     )
 
-    # FIM DA PARTE ESSENCIAL PRO BACK END
-    #################################### -------------------------- ######################################
+    # Campo de entrada (precisa estar acessível às funções)
+    campo_numero = ft.TextField(
+        label="Número do Candidato",
+        width=300,
+        text_align=ft.TextAlign.CENTER,
+        keyboard_type=ft.KeyboardType.NUMBER,
+        autofocus=True,
+    )
 
-    # CONTAINER INICIAL
+    # Callbacks dos botões
+    def adicionar_numero(e):
+        if campo_numero.value != "NULO":
+            campo_numero.value += e.control.text
+        else:
+            campo_numero.value = e.control.text
+        campo_numero.update()
+
+    def votar(e):
+        print("Votando no número:", campo_numero.value)
+        campo_numero.value = ""
+        campo_numero.update()
+
+    def voto_nulo(e):
+        campo_numero.value = "NULO"
+        campo_numero.update()
+
+    def criar_botao(texto, cor, texto_cor, largura=60, altura=None, acao=None):
+        return ft.FilledButton(
+            text=texto,
+            width=largura,
+            height=altura,
+            on_click=acao,
+            style=ft.ButtonStyle(
+                bgcolor=cor,
+                color=texto_cor,
+                shape=ft.RoundedRectangleBorder(radius=4),
+            ),
+        )
+
+    teclado = ft.Container(
+        content=ft.Column(
+            [
+                ft.Row(
+                    [
+                        criar_botao("1", ft.Colors.ON_SURFACE_VARIANT, ft.Colors.ON_TERTIARY, acao=adicionar_numero),
+                        criar_botao("2", ft.Colors.ON_SURFACE_VARIANT, ft.Colors.ON_TERTIARY, acao=adicionar_numero),
+                        criar_botao("3", ft.Colors.ON_SURFACE_VARIANT, ft.Colors.ON_TERTIARY, acao=adicionar_numero),
+                        criar_botao("NULO", ft.Colors.RED_400, ft.Colors.WHITE, largura=80, acao=voto_nulo),
+                    ],
+                    spacing=10,
+                    alignment=ft.alignment.center,
+                ),
+                ft.Row(
+                    [
+                        criar_botao("4", ft.Colors.ON_SURFACE_VARIANT, ft.Colors.ON_TERTIARY, acao=adicionar_numero),
+                        criar_botao("5", ft.Colors.ON_SURFACE_VARIANT, ft.Colors.ON_TERTIARY, acao=adicionar_numero),
+                        criar_botao("6", ft.Colors.ON_SURFACE_VARIANT, ft.Colors.ON_TERTIARY, acao=adicionar_numero),
+                        criar_botao("VOTAR", ft.Colors.GREEN_400, ft.Colors.WHITE, largura=80, altura=80, acao=votar),
+                    ],
+                    spacing=10,
+                    alignment=ft.alignment.center,
+                ),
+                ft.Row(
+                    [
+                        criar_botao("7", ft.Colors.ON_SURFACE_VARIANT, ft.Colors.ON_TERTIARY, acao=adicionar_numero),
+                        criar_botao("8", ft.Colors.ON_SURFACE_VARIANT, ft.Colors.ON_TERTIARY, acao=adicionar_numero),
+                        criar_botao("9", ft.Colors.ON_SURFACE_VARIANT, ft.Colors.ON_TERTIARY, acao=adicionar_numero),
+                    ],
+                    spacing=10,
+                    alignment=ft.alignment.center,
+                ),
+                ft.Row(
+                    [
+                        ft.Container(width=60),  # espaço vazio para alinhar
+                        criar_botao("0", ft.Colors.ON_SURFACE_VARIANT, ft.Colors.ON_TERTIARY, acao=adicionar_numero),
+                    ],
+                    spacing=10,
+                    alignment=ft.alignment.center,
+                ),
+            ],
+            alignment=ft.MainAxisAlignment.CENTER,
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+        ),
+        alignment=ft.alignment.center,
+    )
+
     container_inicial = ft.Container(
         content=ft.ResponsiveRow(
             [
@@ -75,105 +151,6 @@ def main(page: ft.Page):
         )
     )
 
-    # area votação
-
-    # teclado numerico
-    teclado = ft.Container(
-        content=ft.Column(
-            [
-                ft.Row(
-                                [
-                                    ft.FilledButton(text="1", width=60, style=ft.ButtonStyle(
-                                    bgcolor=ft.Colors.ON_SURFACE_VARIANT,  # se adapta bem a temas claros e escuros
-                                    color=ft.Colors.ON_TERTIARY,
-                                    shape=ft.RoundedRectangleBorder(radius=4),  # cantos levemente arredondados (mude para 0 se quiser 100% quadrado)
-                                    ),),
-                                    ft.FilledButton(text="2", width=60, style=ft.ButtonStyle(
-                                    bgcolor=ft.Colors.ON_SURFACE_VARIANT,  # se adapta bem a temas claros e escuros
-                                    color=ft.Colors.ON_TERTIARY,
-                                    shape=ft.RoundedRectangleBorder(radius=4),  # cantos levemente arredondados (mude para 0 se quiser 100% quadrado)
-                                    ),),
-                                    ft.FilledButton(text="3", width=60, style=ft.ButtonStyle(
-                                    bgcolor=ft.Colors.ON_SURFACE_VARIANT,  # se adapta bem a temas claros e escuros
-                                    color=ft.Colors.ON_TERTIARY,
-                                    shape=ft.RoundedRectangleBorder(radius=4),  # cantos levemente arredondados (mude para 0 se quiser 100% quadrado)
-                                    ),),
-                                    ft.FilledButton(text="NULO", width=80, style=ft.ButtonStyle(
-                                    bgcolor=ft.Colors.RED_400,
-                                    color=ft.Colors.WHITE,
-                                    shape=ft.RoundedRectangleBorder(radius=4),  # cantos levemente arredondados (mude para 0 se quiser 100% quadrado)
-                                    ),),
-                                ],
-                                spacing=10,
-                                alignment=ft.alignment.center,
-                            ),
-                            ft.Row(
-                                [
-                                    ft.FilledButton(text="4", width=60, style=ft.ButtonStyle(
-                                    bgcolor=ft.Colors.ON_SURFACE_VARIANT,  # se adapta bem a temas claros e escuros
-                                    color=ft.Colors.ON_TERTIARY,
-                                    shape=ft.RoundedRectangleBorder(radius=4),  # cantos levemente arredondados (mude para 0 se quiser 100% quadrado)
-                                    ),),
-                                    ft.FilledButton(text="5", width=60, style=ft.ButtonStyle(
-                                    bgcolor=ft.Colors.ON_SURFACE_VARIANT,  # se adapta bem a temas claros e escuros
-                                    color=ft.Colors.ON_TERTIARY,
-                                    shape=ft.RoundedRectangleBorder(radius=4),  # cantos levemente arredondados (mude para 0 se quiser 100% quadrado)
-                                    ),),
-                                    ft.FilledButton(text="6", width=60, style=ft.ButtonStyle(
-                                    bgcolor=ft.Colors.ON_SURFACE_VARIANT,  # se adapta bem a temas claros e escuros
-                                    color=ft.Colors.ON_TERTIARY,
-                                    shape=ft.RoundedRectangleBorder(radius=4),  # cantos levemente arredondados (mude para 0 se quiser 100% quadrado)
-                                    ),),
-                                    ft.FilledButton(text="VOTAR", width=80, height=80, style=ft.ButtonStyle(
-                                    bgcolor=ft.Colors.GREEN_400,
-                                    color=ft.Colors.WHITE,
-                                    shape=ft.RoundedRectangleBorder(radius=4),  # cantos levemente arredondados (mude para 0 se quiser 100% quadrado)
-                                    ),),
-                                ],
-                                spacing=10,
-                                alignment=ft.alignment.center,
-                            ),
-                            ft.Row(
-                                [
-                                    ft.FilledButton(text="7", width=60, style=ft.ButtonStyle(
-                                    bgcolor=ft.Colors.ON_SURFACE_VARIANT,  # se adapta bem a temas claros e escuros
-                                    color=ft.Colors.ON_TERTIARY,
-                                    shape=ft.RoundedRectangleBorder(radius=4),  # cantos levemente arredondados (mude para 0 se quiser 100% quadrado)
-                                    ),),
-                                    ft.FilledButton(text="8", width=60, style=ft.ButtonStyle(
-                                    bgcolor=ft.Colors.ON_SURFACE_VARIANT,  # se adapta bem a temas claros e escuros
-                                    color=ft.Colors.ON_TERTIARY,
-                                    shape=ft.RoundedRectangleBorder(radius=4),  # cantos levemente arredondados (mude para 0 se quiser 100% quadrado)
-                                    ),),
-                                    ft.FilledButton(text="9", width=60, style=ft.ButtonStyle(
-                                    bgcolor=ft.Colors.ON_SURFACE_VARIANT,  # se adapta bem a temas claros e escuros
-                                    color=ft.Colors.ON_TERTIARY,
-                                    shape=ft.RoundedRectangleBorder(radius=4),  # cantos levemente arredondados (mude para 0 se quiser 100% quadrado)
-                                    ),),
-                                ],
-                                spacing=10,
-                                alignment=ft.alignment.center,
-                            ),
-                            ft.Row(
-                                [
-                                    ft.Container(width=60),  # Espaço vazio para alinhar o 0 centralizado
-                                    ft.FilledButton(text="0", width=60, style=ft.ButtonStyle(
-                                    bgcolor=ft.Colors.ON_SURFACE_VARIANT,  # se adapta bem a temas claros e escuros
-                                    color=ft.Colors.ON_TERTIARY,
-                                    shape=ft.RoundedRectangleBorder(radius=4),  # cantos levemente arredondados (mude para 0 se quiser 100% quadrado)
-                                    ),),
-                                ],
-                                spacing=10,
-                                alignment=ft.alignment.center,
-                            ),
-            ],
-            alignment=ft.MainAxisAlignment.CENTER,
-            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-        ),
-        alignment=ft.alignment.center,
-    )
-
-
     container_area_votacao = ft.Container(
         content=ft.ResponsiveRow(
             [
@@ -183,17 +160,8 @@ def main(page: ft.Page):
                         [
                             ft.Text("Vote no seu candidato", size=30, weight=ft.FontWeight.BOLD),
                             espacamento2,
-                            ft.Text(
-                                "Digite o número do candidato para votar.",
-                                size=15,
-                            ),
-                            ft.TextField(
-                                label="Número do Candidato",
-                                width=300,
-                                text_align=ft.TextAlign.CENTER,
-                                keyboard_type=ft.KeyboardType.NUMBER,
-                                autofocus=True,
-                            ),
+                            ft.Text("Digite o número do candidato para votar.", size=15),
+                            campo_numero,
                             espacamento2,
                             teclado,
                             espacamento2,
@@ -210,15 +178,13 @@ def main(page: ft.Page):
                     content=candidatos_disponiveis,
                     col={"xs": 12, "md": 12, "lg": 4},
                 ),
-                ft.Container(col={"lg": 2,"md": 3}),
+                ft.Container(col={"lg": 2, "md": 3}),
             ],
             alignment=ft.MainAxisAlignment.CENTER,
             vertical_alignment=ft.CrossAxisAlignment.CENTER,
         )
     )
 
-
-    # FOOTER RESPONSIVO
     footer = ft.Container(
         content=ft.Column(
             [
@@ -244,7 +210,6 @@ def main(page: ft.Page):
         padding=20,
     )
 
-    # PÁGINA FINAL
     page.add(
         ft.Column(
             [
