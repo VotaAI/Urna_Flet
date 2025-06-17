@@ -1,5 +1,6 @@
 import flet as ft
 import requests
+import asyncio
 from datetime import datetime
 
 informacoes_candidatos = []
@@ -11,7 +12,7 @@ def main(page: ft.Page):
 
     permitir = False
 
-    id = 17
+    id = 15 
     informacoes_labels = requests.get(f"https://backend-api-urna.onrender.com/votacoes/{id}").json()
 
     nome_votacao_info = informacoes_labels['titulo']
@@ -189,25 +190,56 @@ def main(page: ft.Page):
             url=url,
             headers=header
             )
+        
+        if response.status_code == 200:
+            # Limpar campos da interface
+            nome_votacao_label.value = ""
+            descricao_label.value = ""
+            periodo_inicio_label.value = ""
+            periodo_termino_label.value = ""
+            
+            nome_votacao_label.update()
+            descricao_label.update()
+            periodo_inicio_label.update()
+            periodo_termino_label.update()
+
 
         print(response.status_code)
         print(response.json())
+
+    message = ft.Text("Pressione os botões de resetar e deletar para ativar as suas funcionalidades.", size=16, color="#ffffff")
 
     def resetar_votacao(e):
-        url = f"https://backend-api-urna.onrender.com/admin/votacoes/{id}/reset"
+        async def resetar():
+            url = f"https://backend-api-urna.onrender.com/admin/votacoes/{id}/reset"
 
-        header = {
-            'accept': 'application/json',
-            'Authorization': f'Bearer {token}'
-        }
+            header = {
+                'accept': 'application/json',
+                'Authorization': f'Bearer {token}'
+            }
 
-        response = requests.delete(
-            url=url,
-            headers=header
-            )
+            response = requests.delete(
+                url=url,
+                headers=header
+                )
+            
+            if response.status_code == 200:
+                # ⚠️ Atualizando o texto do `message` já existente
+                message.value = "Votos resetados."
+                message.color = "#E20F00"
+                message.update()
 
-        print(response.status_code)
-        print(response.json())
+                await asyncio.sleep(3)
+
+                message.value = "Pressione os botões de resetar e deletar para ativar as suas funcionalidades."
+                message.color = "#ffffff"
+                message.update()
+                
+
+            print(response.status_code)
+            print(response.json())
+        
+        asyncio.run(resetar())
 
     message_error_nome_votacao = ft.Text("", color="red", size=16)
     message_error_descricao = ft.Text("", color="red", size=16)
@@ -325,6 +357,11 @@ def main(page: ft.Page):
         padding=ft.padding.only(right=100, left=100)
     )
 
+    message_container = ft.Container(
+        content=ft.Row([message], alignment=ft.MainAxisAlignment.CENTER),
+        alignment=ft.alignment.center
+    )
+
     btn_container = ft.Container(
         content=ft.Column([salvar_cancelar_btn_container, resetar_votos_deletar_btn_container]) 
     )
@@ -339,7 +376,8 @@ def main(page: ft.Page):
                                     candidaturas_container, 
                                     periodo_inicio_container, 
                                     periodo_termino_container, 
-                                    btn_container], spacing=30),
+                                    btn_container,
+                                    message_container], spacing=30), 
                                     alignment=ft.alignment.center,
                                     col={"xl": 6,"md": 8, "sm": 10}
                         ),
