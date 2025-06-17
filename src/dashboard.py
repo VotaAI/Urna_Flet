@@ -2,6 +2,7 @@ import flet as ft
 import requests
 
 def dashboard(page: ft.Page):
+    id_votacao = "id_votacao"  # Placeholder para o ID da votação, se necessário
     page.title = "Vota AÍ"
     page.theme_mode = ft.ThemeMode.LIGHT # trocar modo por aqui
     page.scroll = ft.ScrollMode.AUTO
@@ -389,6 +390,7 @@ def dashboard(page: ft.Page):
     cartoes_votacoes_fechadas = []
 
     for votacao in votacoes_fechadas_api:
+        id_votacao = votacao['id_votacao']  # Pega o ID da votação para usar no botão de detalhes
         cartao = ft.Container(
             content=ft.ResponsiveRow(
                 [
@@ -419,7 +421,7 @@ def dashboard(page: ft.Page):
                                         shape=ft.RoundedRectangleBorder(radius=4),
                                         padding=ft.Padding(40, 20, 40, 20),
                                     ),
-                                    on_click=lambda e, titulo=votacao['titulo']: print(f"Status de {titulo}"),
+                                    on_click=gerar_callback_ir_tela(id_votacao),
                                     width=200,
                                 ),
                             ]

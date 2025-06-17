@@ -19,22 +19,16 @@ def tela_sobre_votacao(page: ft.Page):
     )
 
     id_votacao = page.client_storage.get("id_votacao")
+    if id_votacao is None:
+        page.go("/votacoes")
+        return
 
     detalhes_votacao = requests.get(f"https://backend-api-urna.onrender.com/votacoes/{id_votacao}").json()
     opcoes_disponiveis = requests.get(f"https://backend-api-urna.onrender.com/votacoes/{id_votacao}/opcoes").json()
-    url = f"https://backend-api-urna.onrender.com/votacoes/{id_votacao}/votos"
-    response = requests.get(url)
+    votos_resultados = requests.get(f"https://backend-api-urna.onrender.com/votacoes/{id_votacao}/votos").json()
 
-    print("Status Code votos:", response.status_code)
-    print("Texto da resposta:", response.text)
-
-    if response.status_code == 200 and response.text.strip():
-        votos_resultados = response.json()
-    else:
-        votos_resultados = []
-        print("⚠️ Erro ao buscar votos da votação ou resposta vazia.")
-
-
+    print(f"\n\n\n\n\n\nDETALHES DA VOTAÇÃO: {detalhes_votacao}\n\n\n\n\n")
+    print(f"\n\n\n\n\n\nOPÇÕES DISPONÍVEIS: {opcoes_disponiveis}\n\n\n\n\n")
     print(f"\n\n\n\n\n\n\n{votos_resultados}\n\n\n\n\n")
 
     vencedor_titulo = ''
@@ -82,8 +76,17 @@ def tela_sobre_votacao(page: ft.Page):
     espacamento = ft.Container(height=100)  # Espaçamento entre seções
     espacamento2 = ft.Container(height=20)  # Espaçamento entre seções
 
+    
 
-    tabela_com_votos = ft.DataTable(
+    if votos_resultados == "Votação e/ou opções não encontradas":
+        tabela_com_votos = ft.Text(
+            "Nenhum voto registrado ou opções disponíveis para esta votação.",
+            size=20,
+            color=ft.Colors.RED_400,
+            text_align=ft.TextAlign.CENTER,
+        )
+    else:
+        tabela_com_votos = ft.DataTable(
         columns=[
             ft.DataColumn(ft.Text("Candidato")),
             ft.DataColumn(ft.Text("Detalhes")),
@@ -106,36 +109,56 @@ def tela_sobre_votacao(page: ft.Page):
     # INICIO DA PARTE ESSENCIAL PRO BACK END
 
     # TABELA DE CANDIDATOS
-    candidatos_disponiveis = ft.DataTable(
-        columns=[
-            ft.DataColumn(ft.Text("Opção")),
-            ft.DataColumn(ft.Text("Candidato")),
-            ft.DataColumn(ft.Text("Detalhes")),
-            ft.DataColumn(ft.Text("Votar"))
-        ],
-        rows=[
-            ft.DataRow(
-                cells=[
-                    ft.DataCell(ft.Text(str(opcoes_disponiveis.index(candidato)+1))),
-                    ft.DataCell(ft.Text(candidato["titulo"])),
-                    ft.DataCell(ft.Text(candidato["detalhes"])),
-                    ft.DataCell(criar_botao_votar(candidato["id_opcao"])),
-                ]
-            )
-            for candidato in opcoes_disponiveis
-        ]
-    )
+
+    if opcoes_disponiveis == {'msg': 'Votação e/ou opções não encontradas'}:
+        candidatos_disponiveis = ft.Text(
+            "Nenhum candidato disponível para esta votação.",
+            size=20,
+            color=ft.Colors.RED_400,
+            text_align=ft.TextAlign.CENTER,
+        )
+    else:
+        candidatos_disponiveis = ft.DataTable(
+            columns=[
+                ft.DataColumn(ft.Text("Opção")),
+                ft.DataColumn(ft.Text("Candidato")),
+                ft.DataColumn(ft.Text("Detalhes")),
+                ft.DataColumn(ft.Text("Votar"))
+            ],
+            rows=[
+                ft.DataRow(
+                    cells=[
+                        ft.DataCell(ft.Text(str(opcoes_disponiveis.index(candidato)+1))),
+                        ft.DataCell(ft.Text(candidato["titulo"])),
+                        ft.DataCell(ft.Text(candidato["detalhes"])),
+                        ft.DataCell(criar_botao_votar(candidato["id_opcao"])),
+                    ]
+                )
+                for candidato in opcoes_disponiveis
+            ]
+        )
 
     # DICIONÁRIO COM INFORMAÇÕES SOBRE A VOTAÇÃO
-    sobre_a_votacao = {
-        "titulo": detalhes_votacao["titulo"], 
-        "inicio": detalhes_votacao["data_inicio"],
-        "fim": detalhes_votacao["data_fim"],
-        "descricao": detalhes_votacao["descricao"],
-        "status": detalhes_votacao["status"].title(),
-        # "categoria": "Educação",
-        "permite_candidatura": detalhes_votacao["permite_candidatura"],
-    }
+    if detalhes_votacao == None:
+        sobre_a_votacao = {
+            "titulo": "Votação não encontrada", 
+            "inicio": "N/A",
+            "fim": "N/A",
+            "descricao": "N/A",
+            "status": "N/A".title(),
+            # "categoria": "Educação",
+            "permite_candidatura": False,
+        }
+    else:
+        sobre_a_votacao = {
+            "titulo": detalhes_votacao["titulo"], 
+            "inicio": detalhes_votacao["data_inicio"],
+            "fim": detalhes_votacao["data_fim"],
+            "descricao": detalhes_votacao["descricao"],
+            "status": detalhes_votacao["status"].title(),
+            # "categoria": "Educação",
+            "permite_candidatura": detalhes_votacao["permite_candidatura"],
+        }
 
     # FIM DA PARTE ESSENCIAL PRO BACK END
     #################################### -------------------------- ######################################
@@ -226,26 +249,6 @@ def tela_sobre_votacao(page: ft.Page):
     )
 
     # PÁGINA FINAL
-    page.add(
-        ft.Column(
-            [
-                espacamento,
-                container_inicial,
-                espacamento2,
-                container_area_votacao,
-                espacamento,
-                espacamento,
-                tabela_com_votos,
-                espacamento,
-                footer,
-            ],
-            expand=True,
-            scroll=ft.ScrollMode.AUTO,
-            alignment=ft.MainAxisAlignment.START,
-            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-        )
-    )
-
     return ft.View(
         route="/sobre",
         appbar=ft.AppBar(
