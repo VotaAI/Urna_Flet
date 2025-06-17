@@ -310,7 +310,7 @@ def tela_sobre_votacao(page: ft.Page):
             title=ft.Text("VotaAÍ"),
             center_title=False,
             actions=[
-                ft.TextButton(text="Tela Inicial", on_click=lambda e: page.go("/dashboard_usuario")),
+                ft.TextButton(text="Tela Inicial", on_click=lambda e: page.go("/votacoes")),
             ],
         ),
         controls=[

@@ -505,13 +505,13 @@ def tela_criar_votacao(page: ft.Page):
     )
 
     return ft.View(
-        route="/dashboard",
+        route="/criar_votacao",
         appbar=ft.AppBar(  
             leading=ft.Icon(ft.Icons.HOW_TO_VOTE),
             title=ft.Text("VotaAÍ"),
             center_title=False,
             actions=[
-                ft.TextButton(text="Tela Inicial", on_click=lambda e: page.go("/dashboard_usuario")),
+                ft.TextButton(text="Tela Inicial", on_click=lambda e: page.go("/votacoes")),
             ],
         ),
         controls=[
