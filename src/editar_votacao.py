@@ -9,8 +9,6 @@ def main(page: ft.Page):
     page.bgcolor = "#303030"
     page.scroll=True
 
-    candidatos_card = ft.Column()
-
     permitir = False
 
     id = 17
@@ -21,6 +19,13 @@ def main(page: ft.Page):
     permitir_candidatura = informacoes_labels['permite_candidatura']
     periodo_inicio_info = informacoes_labels['data_inicio']
     periodo_termino_info = informacoes_labels['data_fim']
+
+    
+    # Primeiro: transformar a string em datetime
+    data_inicio_dt, data_termino_dt = datetime.strptime(periodo_inicio_info, "%Y-%m-%d"), datetime.strptime(periodo_termino_info, "%Y-%m-%d")
+
+    # Depois: reformatar
+    data_formatada_inicio, data_formatada_termino = data_inicio_dt.strftime("%d/%m/%Y"), data_termino_dt.strftime("%d/%m/%Y")
 
     print(nome_votacao_info)
     print(descricao_info)
@@ -172,6 +177,38 @@ def main(page: ft.Page):
 
         candidaturas_sim_btn.update()
 
+    def deletar_votacao(e):
+        url = f"https://backend-api-urna.onrender.com/admin/votacoes/{id}"
+
+        header = {
+            'accept': 'application/json',
+            'Authorization': f'Bearer {token}'
+        }
+
+        response = requests.delete(
+            url=url,
+            headers=header
+            )
+
+        print(response.status_code)
+        print(response.json())
+
+    def resetar_votacao(e):
+        url = f"https://backend-api-urna.onrender.com/admin/votacoes/{id}/reset"
+
+        header = {
+            'accept': 'application/json',
+            'Authorization': f'Bearer {token}'
+        }
+
+        response = requests.delete(
+            url=url,
+            headers=header
+            )
+
+        print(response.status_code)
+        print(response.json())
+
     message_error_nome_votacao = ft.Text("", color="red", size=16)
     message_error_descricao = ft.Text("", color="red", size=16)
     message_error_periodo_inicio = ft.Text("", color="red", size=16)
@@ -234,12 +271,12 @@ def main(page: ft.Page):
     candidaturas_container = ft.Container(content=ft.Column([candidaturas, candidaturas_btn_container, descricao_candidatura], spacing=1)) 
 
     periodo_inicio = ft.Text("Data de Início", size=18, opacity=0.6, color="#ffffff")
-    periodo_inicio_label = ft.TextField(f"{periodo_inicio_info}",disabled=True, bgcolor="#FFFFFF", opacity=0.6, color="#000000", border_radius=10, border_color="#352A2A", hint_text="dd-mm-yyyy")
+    periodo_inicio_label = ft.TextField(f"{data_formatada_inicio}",disabled=True, bgcolor="#FFFFFF", opacity=0.6, color="#000000", border_radius=10, border_color="#352A2A", hint_text="dd-mm-yyyy")
     # message_error_periodo_inicio = ft.Text("", color="red", size=16)
     periodo_inicio_container = ft.Container(content=ft.Column([periodo_inicio, periodo_inicio_label, message_error_periodo_inicio], spacing=1))
 
     periodo_termino = ft.Text("Data de Término", size=18, opacity=1, color="#ffffff")
-    periodo_termino_label = ft.TextField(f"{periodo_termino_info}", disabled=False, bgcolor="#ffffff", opacity=1, color="#000000", border_radius=10, border_color="#352A2A", on_change=formatar_data_termino, hint_text="dd-mm-yyyy")
+    periodo_termino_label = ft.TextField(f"{data_formatada_termino}", disabled=False, bgcolor="#ffffff", opacity=1, color="#000000", border_radius=10, border_color="#352A2A", on_change=formatar_data_termino, hint_text="dd-mm-yyyy")
     # message_error_periodo_termino = ft.Text("", color="red", size=16)
     periodo_termino_container = ft.Container(content=ft.Column([periodo_termino, periodo_termino_label, message_error_periodo_termino], spacing=1))
 
@@ -269,7 +306,8 @@ def main(page: ft.Page):
         text="Resetar Votos",
         style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=10),bgcolor="#ffffff", color="#000000", text_style=ft.TextStyle(weight=ft.FontWeight.BOLD)),
         expand=True,
-        height=45
+        height=45,
+        on_long_press=resetar_votacao
         )
     
     deletar_btn = ft.ElevatedButton(
@@ -277,7 +315,8 @@ def main(page: ft.Page):
         style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=10), color="#ffffff", side=ft.BorderSide(width=2, color="#ffffff"), text_style=ft.TextStyle(weight=ft.FontWeight.BOLD)),
         expand=True,
         height=45,
-        bgcolor="#303030"
+        bgcolor="#303030",
+        on_long_press=deletar_votacao
         )
     
     resetar_votos_deletar_btn_container = ft.Container(
