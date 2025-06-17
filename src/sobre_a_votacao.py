@@ -23,10 +23,32 @@ def tela_sobre_votacao(page: ft.Page):
         ],
     )
 
+    user_type = page.client_storage.get("user_type")
     id_votacao = page.client_storage.get("id_votacao")
     if id_votacao is None:
         page.go("/votacoes")
         return
+    
+    if user_type == "admin":
+        botao_editar_votacao = ft.FilledButton(
+            text="Editar Votação",
+            style=ft.ButtonStyle(
+                bgcolor=ft.Colors.ON_SURFACE_VARIANT,  # se adapta bem a temas claros e escuros
+                color=ft.Colors.PRIMARY_CONTAINER,
+                shape=ft.RoundedRectangleBorder(radius=4),  # cantos levemente arredondados (mude para 0 se quiser 100% quadrado)
+                padding=ft.Padding(10, 20, 10, 20),  # aumenta o tamanho (deixa mais quadrado)
+                
+            ),
+            on_click=lambda e: page.go(f"/editar_votacao"),
+            width=200,
+        )
+    else:
+        botao_editar_votacao = ft.Text(
+            "Você não tem permissão para editar esta votação.",
+            size=20,
+            color=ft.Colors.RED_400,
+            text_align=ft.TextAlign.CENTER,
+        )
 
     detalhes_votacao = requests.get(f"https://backend-api-urna.onrender.com/votacoes/{id_votacao}").json()
     opcoes_disponiveis = requests.get(f"https://backend-api-urna.onrender.com/votacoes/{id_votacao}/opcoes").json()
@@ -296,6 +318,7 @@ def tela_sobre_votacao(page: ft.Page):
                     [
                         espacamento,
                         container_inicial,
+                        botao_editar_votacao,
                         espacamento2,
                         container_area_votacao,
                         espacamento,

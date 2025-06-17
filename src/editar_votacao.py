@@ -5,14 +5,16 @@ from datetime import datetime
 
 informacoes_candidatos = []
 
-def main(page: ft.Page):
+def tela_editar_votacao(page: ft.Page):
     page.title = "Criar votação"
     page.bgcolor = "#303030"
     page.scroll=True
 
     permitir = False
 
-    id = 15 
+    user_type = page.client_storage.get("user_type")
+    id = page.client_storage.get("id_votacao")
+
     informacoes_labels = requests.get(f"https://backend-api-urna.onrender.com/votacoes/{id}").json()
 
     nome_votacao_info = informacoes_labels['titulo']
@@ -136,7 +138,6 @@ def main(page: ft.Page):
         nonlocal permitir
 
         
-
         permitir = False
         print(permitir)
 
@@ -148,7 +149,7 @@ def main(page: ft.Page):
             shape=ft.RoundedRectangleBorder(radius=10)
         )
 
-        candidaturas_sim_btn.update()
+        # candidaturas_sim_btn.update() # No longer needed here
 
         candidaturas_nao_btn.style = ft.ButtonStyle(
             side=ft.BorderSide(width=2, color="#ffffff"),
@@ -157,7 +158,7 @@ def main(page: ft.Page):
             shape=ft.RoundedRectangleBorder(radius=10)
         )
         
-        candidaturas_nao_btn.update()
+        # candidaturas_nao_btn.update() # No longer needed here
     
     def desativar_design(e):
         candidaturas_nao_btn.style = ft.ButtonStyle(
@@ -167,7 +168,7 @@ def main(page: ft.Page):
             shape=ft.RoundedRectangleBorder(radius=10)
         )
 
-        candidaturas_nao_btn.update()
+        # candidaturas_nao_btn.update() # No longer needed here
 
         candidaturas_sim_btn.style = ft.ButtonStyle(
             side=ft.BorderSide(width=2, color="#ffffff"),
@@ -176,7 +177,7 @@ def main(page: ft.Page):
             shape=ft.RoundedRectangleBorder(radius=10)
         )
 
-        candidaturas_sim_btn.update()
+        # candidaturas_sim_btn.update() # No longer needed here
 
     def deletar_votacao(e):
         url = f"https://backend-api-urna.onrender.com/admin/votacoes/{id}"
@@ -198,6 +199,7 @@ def main(page: ft.Page):
             periodo_inicio_label.value = ""
             periodo_termino_label.value = ""
             
+            # These updates are fine as they happen *after* controls are added to page
             nome_votacao_label.update()
             descricao_label.update()
             periodo_inicio_label.update()
@@ -246,6 +248,27 @@ def main(page: ft.Page):
     message_error_periodo_inicio = ft.Text("", color="red", size=16)
     message_error_periodo_termino = ft.Text("", color="red", size=16)
 
+    # Initialize styles based on 'permitir_candidatura'
+    initial_sim_style = ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=10), bgcolor="#3B3B3B", side=ft.BorderSide(width=2, color="#ffffff"))
+    initial_nao_style = ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=10), bgcolor="#3B3B3B", side=ft.BorderSide(width=2, color="#ffffff"))
+
+    if permitir_candidatura:
+        initial_sim_style = ft.ButtonStyle(
+            side=ft.BorderSide(width=2, color="#0400FF"),
+            bgcolor="#3B3B3B",
+            color="#ffffff",
+            shape=ft.RoundedRectangleBorder(radius=10)
+        )
+        permitir = True # Set initial state of 'permitir'
+    else:
+        initial_nao_style = ft.ButtonStyle(
+            side=ft.BorderSide(width=2, color="#0400FF"),
+            bgcolor="#3B3B3B",
+            color="#ffffff",
+            shape=ft.RoundedRectangleBorder(radius=10)
+        )
+        permitir = False # Set initial state of 'permitir'
+
     page.appbar = ft.AppBar(
             leading=ft.Icon(ft.Icons.HOW_TO_VOTE),
             title=ft.Text("VotaAÍ"),
@@ -272,7 +295,7 @@ def main(page: ft.Page):
     nome_votacao = ft.Text("Nome da Votação", size=18, color="#ffffff")
     nome_votacao_label = ft.TextField(f"{nome_votacao_info}",hint_text="Insira o nome da votação", bgcolor="#ffffff", color="#000000", border_radius=10, border_color="#352A2A")
     # message_error_nome_votacao = ft.Text("", color="red", size=16)
-    nome_votacao_container = ft.Container(content=ft.Column([nome_votacao, nome_votacao_label, message_error_nome_votacao], spacing=1))    
+    nome_votacao_container = ft.Container(content=ft.Column([nome_votacao, nome_votacao_label, message_error_nome_votacao], spacing=1))     
 
     descricao = ft.Text("Descrição", size=18, color="#ffffff")
     descricao_label = ft.TextField(f"{descricao_info}", hint_text="Insira uma breve descrição", bgcolor="#ffffff", color="#000000", border_radius=10, border_color="#352A2A")
@@ -281,22 +304,22 @@ def main(page: ft.Page):
 
     candidaturas = ft.Text("Permitir Candidaturas?", size=18, color="#ffffff", opacity=0.6)
     candidaturas_sim_btn = ft.ElevatedButton(text="Sim",
-                                            color="#ffffff", 
-                                            expand=True,
-                                            style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=10), bgcolor="#3B3B3B", side=ft.BorderSide(width=2, color="#ffffff")), 
-                                            height=45,
-                                            on_click=lambda e: [ativar(e), ativar_design(e)],
-                                            disabled=True,
-                                            opacity=0.6)
+                                             color="#ffffff", 
+                                             expand=True,
+                                             style=initial_sim_style, # Use the pre-determined style
+                                             height=45,
+                                             on_click=lambda e: [ativar(e), ativar_design(e)],
+                                             disabled=True,
+                                             opacity=0.6)
     
     candidaturas_nao_btn = ft.ElevatedButton(text="Não", 
-                                            color="#ffffff", 
-                                            expand=True, 
-                                            style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=10), bgcolor="#3B3B3B", side=ft.BorderSide(width=2, color="#ffffff")), 
-                                            height=45,
-                                            on_click=lambda e: [desativar(e), desativar_design(e)],
-                                            disabled=True,
-                                            opacity=0.6)
+                                             color="#ffffff", 
+                                             expand=True, 
+                                             style=initial_nao_style, # Use the pre-determined style
+                                             height=45,
+                                             on_click=lambda e: [desativar(e), desativar_design(e)],
+                                             disabled=True,
+                                             opacity=0.6)
     
     descricao_candidatura = ft.Text("", color="#98989898")
     candidaturas_btn_container = ft.Container(content=ft.Row([candidaturas_sim_btn, candidaturas_nao_btn]))
@@ -372,14 +395,14 @@ def main(page: ft.Page):
                     ft.Container(col={"xl": 3,"md": 2, "sm": 1}),
                     ft.Container(
                         content=ft.Column([nome_votacao_container, 
-                                    descricao_container, 
-                                    candidaturas_container, 
-                                    periodo_inicio_container, 
-                                    periodo_termino_container, 
-                                    btn_container,
-                                    message_container], spacing=30), 
-                                    alignment=ft.alignment.center,
-                                    col={"xl": 6,"md": 8, "sm": 10}
+                                        descricao_container, 
+                                        candidaturas_container, 
+                                        periodo_inicio_container, 
+                                        periodo_termino_container, 
+                                        btn_container,
+                                        message_container], spacing=30), 
+                                        alignment=ft.alignment.center,
+                                        col={"xl": 6,"md": 8, "sm": 10}
                         ),
                         ft.Container(col={"xl": 3,"md": 2, "sm": 1})
                 ]
@@ -404,23 +427,37 @@ def main(page: ft.Page):
     periodo_inicio_label.on_change = lambda e: [limpar_erro_campo(periodo_inicio_label), formatar_data_inicio(e)]
     periodo_termino_label.on_change = lambda e: [limpar_erro_campo(periodo_termino_label), formatar_data_termino(e)]
 
-    page.add(container_titulo, container_labels)
+    # page.add(container_titulo, container_labels) # Remove this line
 
-    if permitir:
-        pass
-        
-    
-    elif not permitir:
-
-        pass
-
-    if permitir_candidatura == True:
-        ativar(None)
-        ativar_design(None)
-    elif permitir_candidatura == False:
-        desativar(None)
-        desativar_design(None)
+    container_pg = ft.Column(
+        [
+            container_titulo,
+            container_labels
+        ],
+    )
 
     print(permitir)
 
-ft.app(main)
+    return ft.View(
+        route="/editar_votacao",
+        appbar=ft.AppBar(
+            leading=ft.Icon(ft.Icons.HOW_TO_VOTE),
+            title=ft.Text("VotaAÍ"),
+            center_title=False,
+            actions=[
+                ft.TextButton(text="Tela Inicial", on_click=lambda e: page.go("/dashboard_usuario")),
+            ],
+        ),
+        controls=[
+                ft.Column(
+                    [
+                        container_pg,
+                    ],
+                    expand=True,
+                    scroll=ft.ScrollMode.AUTO,
+                    alignment=ft.MainAxisAlignment.START,
+                    horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                )
+        ],
+    
+    )

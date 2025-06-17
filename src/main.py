@@ -34,6 +34,9 @@ def main(page: ft.Page):
         elif rota == "/enviar_candidatura":
             from enviar_candidatura import tela_enviar_candidatura
             page.views.append(tela_enviar_candidatura(page))
+        elif rota == "/editar_votacao":
+            from editar_votacao import tela_editar_votacao
+            page.views.append(tela_editar_votacao(page))
 
         page.update()  # <- importante que fique no final
 
