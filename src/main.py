@@ -28,6 +28,12 @@ def main(page: ft.Page):
         elif rota == "/sobre":
             from sobre_a_votacao import tela_sobre_votacao
             page.views.append(tela_sobre_votacao(page))
+        elif rota == "/criar_votacao":
+            from criacao_votacao import tela_criar_votacao
+            page.views.append(tela_criar_votacao(page))
+        elif rota == "/enviar_candidatura":
+            from enviar_candidatura import tela_enviar_candidatura
+            page.views.append(tela_enviar_candidatura(page))
 
         page.update()  # <- importante que fique no final
 

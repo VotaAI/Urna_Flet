@@ -2,7 +2,7 @@ import flet as ft
 import requests
 from token_decode import decode_jwt_payload
 
-def main(page: ft.Page):
+def tela_enviar_candidatura(page: ft.Page):
     page.title = "Enviar candidatura"
     page.bgcolor = "#303030"
     page.appbar = ft.AppBar(
@@ -171,4 +171,34 @@ def main(page: ft.Page):
 
     page.add(container_titulo, container_labels)
 
-ft.app(main)
+    coluna_tela = ft.Column(
+        controls= [
+            container_titulo,
+            container_labels
+        ]
+    )
+
+
+    return ft.View(
+        route="/enviar_candidatura",
+        appbar=ft.AppBar(
+            leading=ft.Icon(ft.Icons.HOW_TO_VOTE),
+            title=ft.Text("VotaAÍ"),
+            center_title=False,
+            actions=[
+                ft.TextButton(text="Tela Inicial", on_click=lambda e: page.go("/dashboard_usuario")),
+            ],
+        ),
+        controls=[
+                ft.Column(
+                    [
+                        coluna_tela,
+                    ],
+                    expand=True,
+                    scroll=ft.ScrollMode.AUTO,
+                    alignment=ft.MainAxisAlignment.START,
+                    horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                )
+        ],
+    
+    )

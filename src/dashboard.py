@@ -357,7 +357,7 @@ def dashboard(page: ft.Page):
                                                 padding=ft.Padding(40, 40, 40, 40),  # aumenta o tamanho (deixa mais quadrado)
                                                 
                                             ),
-                                            on_click=lambda e: print("Baixar CSV clicado!"),
+                                            on_click=lambda e: page.go("/criar_votacao"),
                                             width=1000,
                                         )
     

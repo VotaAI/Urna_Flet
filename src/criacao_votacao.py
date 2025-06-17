@@ -4,7 +4,7 @@ from datetime import datetime
 
 informacoes_candidatos = []
 
-def main(page: ft.Page):
+def tela_criar_votacao(page: ft.Page):
     page.title = "Criar votação"
     page.bgcolor = "#303030"
     page.scroll=True
@@ -194,7 +194,7 @@ def main(page: ft.Page):
                                             bgcolor="transparent", 
                                             overlay_color="transparent", 
                                             shadow_color="transparent", 
-                                            color="#ffffff", 
+                                            color="#000000", 
                                             elevation=0, 
                                             text_style=ft.TextStyle(size=20)), 
                                             on_click=remover_ultimo_candidato)
@@ -205,8 +205,8 @@ def main(page: ft.Page):
                         [
                             icone_pessoa,
                             ft.Column([
-                                ft.Text(candidatos_label.value, size=20, color="#ffffff"),
-                                ft.Text(detalhes_label.value, size=16, color="#989898")
+                                ft.Text(candidatos_label.value, size=20, color="#000000"),
+                                ft.Text(detalhes_label.value, size=16, color="#505050")
                             ], spacing=1)
                         ]
                     ),
@@ -346,8 +346,8 @@ def main(page: ft.Page):
             ],
         )
     
-    titulo = ft.Text("Votações", size=45, weight=ft.FontWeight.BOLD, color="#ffffff")
-    sub_titulo = ft.Text("Defina os detalhes da votação que deseja criar.", size=16, color="#ffffff")
+    titulo = ft.Text("Votações", size=45, weight=ft.FontWeight.BOLD, color="#000000")
+    sub_titulo = ft.Text("Defina os detalhes da votação que deseja criar.", size=16, color="#000000")
     
     container_titulo = ft.Container(
         content=ft.Column([titulo, sub_titulo], spacing=10, alignment=ft.MainAxisAlignment.CENTER, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
@@ -357,12 +357,12 @@ def main(page: ft.Page):
 
     # detalhes_votacao = ft.Text("Detalhes da Votação")
 
-    nome_votacao = ft.Text("Nome da Votação", size=18, color="#ffffff")
+    nome_votacao = ft.Text("Nome da Votação", size=18, color="#000000")
     nome_votacao_label = ft.TextField(hint_text="Insira o nome da votação", bgcolor="#ffffff", color="#000000", border_radius=10, border_color="#352A2A")
     # message_error_nome_votacao = ft.Text("", color="red", size=16)
     nome_votacao_container = ft.Container(content=ft.Column([nome_votacao, nome_votacao_label, message_error_nome_votacao], spacing=1))    
 
-    descricao = ft.Text("Descrição", size=18, color="#ffffff")
+    descricao = ft.Text("Descrição", size=18, color="#000000")
     descricao_label = ft.TextField(hint_text="Insira uma breve descrição", bgcolor="#ffffff", color="#000000", border_radius=10, border_color="#352A2A")
     # message_error_descricao = ft.Text("", color="red", size=16)
     descricao_container = ft.Container(content=ft.Column([descricao, descricao_label, message_error_descricao], spacing=1))
@@ -371,7 +371,7 @@ def main(page: ft.Page):
     # categoria_label = ft.TextField(hint_text="Insira uma categoria para a votação", bgcolor="#ffffff", color="#000000", border_radius=10, border_color="#352A2A")
     # categoria_container = ft.Container(content=ft.Column([categoria, categoria_label], spacing=1))
 
-    candidaturas = ft.Text("Permitir Candidaturas?", size=18, color="#ffffff")
+    candidaturas = ft.Text("Permitir Candidaturas?", size=18, color="#000000")
     candidaturas_sim_btn = ft.ElevatedButton(text="Sim", 
                                             color="#ffffff", 
                                             expand=True,
@@ -390,23 +390,23 @@ def main(page: ft.Page):
     candidaturas_btn_container = ft.Container(content=ft.Row([candidaturas_sim_btn, candidaturas_nao_btn]))
     candidaturas_container = ft.Container(content=ft.Column([candidaturas, candidaturas_btn_container, descricao_candidatura], spacing=1)) 
 
-    periodo_inicio = ft.Text("Data de Início", size=18, opacity=1, color="#ffffff")
+    periodo_inicio = ft.Text("Data de Início", size=18, opacity=1, color="#000000")
     periodo_inicio_label = ft.TextField(disabled=False, bgcolor="#FFFFFF", opacity=1, color="#000000", border_radius=10, border_color="#352A2A", hint_text="dd-mm-yyyy")
     # message_error_periodo_inicio = ft.Text("", color="red", size=16)
     periodo_inicio_container = ft.Container(content=ft.Column([periodo_inicio, periodo_inicio_label, message_error_periodo_inicio], spacing=1))
 
-    periodo_termino = ft.Text("Data de Término", size=18, opacity=1, color="#ffffff")
+    periodo_termino = ft.Text("Data de Término", size=18, opacity=1, color="#000000")
     periodo_termino_label = ft.TextField(disabled=False, bgcolor="#ffffff", opacity=1, color="#000000", border_radius=10, border_color="#352A2A", on_change=formatar_data_termino, hint_text="dd-mm-yyyy")
     # message_error_periodo_termino = ft.Text("", color="red", size=16)
     periodo_termino_container = ft.Container(content=ft.Column([periodo_termino, periodo_termino_label, message_error_periodo_termino], spacing=1))
 
-    candidatos = ft.Text("Registrar opção/candidato", size=18, color="#FFFFFF")
+    candidatos = ft.Text("Registrar opção/candidato", size=18, color="#000000")
     candidatos_label = ft.TextField(hint_text="Insira um(a) opcao/candidato", bgcolor="#ffffff", color="#000000", border_radius=10, border_color="#352A2A")
     candidatos_container = ft.Container(content=ft.Column([candidatos, candidatos_label], spacing=1))
 
     candidatos_label.on_change = ativar_detalhes
 
-    detalhes = ft.Text("Detalhes", size=18, opacity=0.6, color="#ffffff")
+    detalhes = ft.Text("Detalhes", size=18, opacity=0.6, color="#000000")
     detalhes_label = ft.TextField(hint_text="Insira informações da(o) opcao/candidato", disabled=True, opacity=0.6, bgcolor="#ffffff", color="#000000", border_radius=10, border_color="#352A2A")
     detalhes_container = ft.Container(content=ft.Column([detalhes, detalhes_label], spacing=1))
 
@@ -419,7 +419,7 @@ def main(page: ft.Page):
     
     adicionar_btn_container = ft.Container(content=ft.Row([adicionar_btn]))
     
-    opcoes_disponiveis_titulo = ft.Text("Opções disponíveis", size=32, color="#ffffff")
+    opcoes_disponiveis_titulo = ft.Text("Opções disponíveis", size=32, color="#000000")
 
     opcoes_disponiveis_titulo_container = ft.Container(content=ft.Row([opcoes_disponiveis_titulo], alignment=ft.MainAxisAlignment.START))
     opcoes_disponiveis_cards_container = ft.Container(content=ft.Column([candidatos_card], alignment=ft.MainAxisAlignment.START, expand=True))
@@ -489,5 +489,44 @@ def main(page: ft.Page):
     periodo_termino_label.on_change = lambda e: [limpar_erro_campo(periodo_termino_label), formatar_data_termino(e)]
 
     page.add(container_titulo, container_labels)
+    container_tela = ft.Container(
+        content=ft.Column(
+            [
+                container_titulo,
+                container_labels
+            ],
+            expand=True,
+            scroll=ft.ScrollMode.AUTO,
+            alignment=ft.MainAxisAlignment.CENTER,
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER
+        ),
+        bgcolor="#303030",
+        padding=ft.padding.all(20)
+    )
 
-ft.app(main)
+    return ft.View(
+        route="/dashboard",
+        appbar=ft.AppBar(  
+            leading=ft.Icon(ft.Icons.HOW_TO_VOTE),
+            title=ft.Text("VotaAÍ"),
+            center_title=False,
+            actions=[
+                ft.TextButton(text="Tela Inicial", on_click=lambda e: page.go("/dashboard_usuario")),
+            ],
+        ),
+        controls=[
+            ft.Column(
+            [
+                container_titulo,
+                container_labels
+            ],
+            expand=True,
+            scroll=ft.ScrollMode.AUTO,
+            alignment=ft.MainAxisAlignment.CENTER,
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER
+        ),
+        ]
+    )
+
+
+ 
