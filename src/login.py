@@ -45,6 +45,8 @@ def tela_login(page: ft.Page):
         # user type
         page.client_storage.set("user_type", user_type)
 
+        page.client_storage.set("id_user", response.json()["user"]["id_user"])
+
         print(token_storage)
 
         page.go("/votacoes")
