@@ -1,15 +1,15 @@
 import flet as ft
 import requests
-
-# SE STATUS = ABERTA, ADICIONA O BOTÃO DE ENVIAR CANDIDATURA
-# ATUALIZA AS FUNÇÕES VER CANDIDATOS
-# E MAIS FUNÇ
-# OES PRA TELA DE ADM
+from datetime import datetime
 
 def tela_sobre_votacao(page: ft.Page):
     page.title = "Vota AÍ"
     page.theme_mode = ft.ThemeMode.LIGHT # trocar modo por aqui
     page.scroll = ft.ScrollMode.AUTO
+
+    text_msg_ao_votar = ft.Text('')
+
+    print(page.client_storage.get("id_user"))
 
     page.appbar = ft.AppBar(
         leading=ft.Icon(ft.Icons.HOW_TO_VOTE),
@@ -60,7 +60,7 @@ def tela_sobre_votacao(page: ft.Page):
                 return opcao["total_votos"]
         return 0
 
-
+    id_user = page.client_storage.get("id_user")
 
     def criar_botao_votar(id_opcao):
         btn = ft.FilledButton(
@@ -72,16 +72,61 @@ def tela_sobre_votacao(page: ft.Page):
                 padding=ft.Padding(10, 10, 10, 10),  # aumenta o tamanho (deixa mais quadrado)
                 
             ),
-            on_click=lambda e: print("Baixar CSV clicado!"),
+            on_click=lambda e, id_opcao_btn=id_opcao: votar(id_opcao),
             width=120,
         )
         return btn
+
 
     # ESPAÇAMENTOS
     espacamento = ft.Container(height=100)  # Espaçamento entre seções
     espacamento2 = ft.Container(height=20)  # Espaçamento entre seções
 
-    
+    def votar(id_opcao):
+        nonlocal text_msg_ao_votar
+        msg_field = text_msg_ao_votar
+        if detalhes_votacao["status"] == "aberta":
+            url = "https://backend-api-urna.onrender.com/votos"
+
+            payload = {
+                "id_user": id_user,
+                "id_votacao": id_votacao,
+                "id_opcao": id_opcao,
+                "data_voto": str(datetime.utcnow()),
+            }
+
+            headers = {
+                'accept': 'application/json',
+                "Content-Type": "application/json"
+            }
+
+            response = requests.post(url, json=payload, headers=headers)
+
+            if response.status_code == 200:
+                try:
+                    msg_field.value = response.json()["msg"]
+                    msg_field.size = 40
+                    page.update()
+                except:
+                    print(f"\n\n\n\n\n{response.json()}\n\n\n\n\n\n")
+                    msg_field.value= 'SEU VOTO FOI REGISTRADO'
+                    msg_field.size = 40
+                    page.update()
+                    return
+            else:
+                msg_field.value = response.json()["msg"]
+                msg_field.size = 40
+                page.update()
+        else:
+            msg_field.value = 'NÃO É POSSÍVEL VOTAR EM UMA VOTAÇÃO FECHADA'
+            msg_field.size = 40
+            page.update()
+
+
+
+
+
+
 
     if votos_resultados == "Votação e/ou opções não encontradas":
         tabela_com_votos = ft.Text(
@@ -143,6 +188,15 @@ def tela_sobre_votacao(page: ft.Page):
             ]
         )
 
+
+
+
+#criar_botao_votar(candidato["id_opcao"])
+
+
+
+
+
     # DICIONÁRIO COM INFORMAÇÕES SOBRE A VOTAÇÃO
     if detalhes_votacao == None:
         sobre_a_votacao = {
@@ -164,30 +218,6 @@ def tela_sobre_votacao(page: ft.Page):
             # "categoria": "Educação",
             "permite_candidatura": detalhes_votacao["permite_candidatura"],
         }
-    
-    print(sobre_a_votacao["permite_candidatura"])
-
-    if sobre_a_votacao["permite_candidatura"] == True:
-        teste = ft.FilledButton(
-            text="Enviar Candidatura",
-            style=ft.ButtonStyle(
-                bgcolor=ft.Colors.ON_SURFACE_VARIANT,  # se adapta bem a temas claros e escuros
-                color=ft.Colors.PRIMARY_CONTAINER,
-                shape=ft.RoundedRectangleBorder(radius=4),  # cantos levemente arredondados (mude para 0 se quiser 100% quadrado)
-                padding=ft.Padding(10, 10, 10, 10),  # aumenta o tamanho (deixa mais quadrado)
-                
-            ),
-            on_click=lambda e: page.go("/enviar_candidatura"),
-            width=120,
-        )
-    else:
-        teste = ft.Text(
-            "Candidaturas não são permitidas nesta votação.",
-            size=20,
-            color=ft.Colors.RED_400,
-            text_align=ft.TextAlign.CENTER,
-        )
-
 
     # FIM DA PARTE ESSENCIAL PRO BACK END
     #################################### -------------------------- ######################################
@@ -214,14 +244,11 @@ def tela_sobre_votacao(page: ft.Page):
                                 f"Status: {sobre_a_votacao['status']}",
                                 size=15,
                             ),
-                            #teste,
                             # ft.Text(
                             #     f"Categoria: {sobre_a_votacao['categoria']}",
                             #     size=15,
                             # ),
-                            teste,
                             espacamento2,
-                            
                         ],
                         alignment=ft.MainAxisAlignment.CENTER,
                     ),
@@ -297,6 +324,7 @@ def tela_sobre_votacao(page: ft.Page):
                         espacamento,
                         container_inicial,
                         espacamento2,
+                        text_msg_ao_votar,
                         container_area_votacao,
                         espacamento,
                         espacamento,
