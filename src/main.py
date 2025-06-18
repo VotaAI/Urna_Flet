@@ -23,6 +23,7 @@ def main(page: ft.Page):
             page.views.append(tela_downloads(page))
         elif rota == "/entrar":
             page.views.append(tela_login(page))
+            page.bgcolor = "#303030"
         elif rota == "/cadastrar":
             page.views.append(tela_cadastro(page))
         elif rota == "/sobre":
