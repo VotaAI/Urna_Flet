@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: urna_flet_web
+    name: urna_flet
     runtime: python
     buildCommand: ""
     startCommand: flet run src/main.py --port $PORT --web
