@@ -129,8 +129,146 @@ def dashboard(page: ft.Page):
     )
 
 
+    limite_aberto = 3
+    limite_fechado = 3
 
+    def ver_mais_aberto(e):
+        nonlocal limite_aberto, cartoes_votacoes
 
+        limite_aberto += 3  # Aumenta o limite
+
+        # Faz nova requisição com o novo limite
+        novos_dados = requests.get(f"https://backend-api-urna.onrender.com/votacoes/open?limit={limite_aberto}&offset=0").json()
+
+        # Limpa os cartões antigos
+        cartoes_votacoes.clear()
+
+        # Recria os cartões
+        for votacao in novos_dados:
+            id_votacao = votacao['id_votacao']
+            cartao = ft.Container(
+                content=ft.ResponsiveRow(
+                    [
+                        ft.Container(
+                            width=60,
+                            height=60,
+                            bgcolor=ft.Colors.GREY_300,
+                        ),
+                        ft.Container(
+                            content=ft.Column(
+                                [
+                                    ft.Text(f"{votacao['titulo']}", weight=ft.FontWeight.BOLD, size=20),
+                                    ft.Text(f"Período: {votacao['data_inicio']} até {votacao['data_fim']}."),
+                                    ft.Text(f"Descrição: {votacao['descricao']}"),
+                                ]
+                            ),
+                            expand=True,
+                            padding=10,
+                        ),
+                        ft.Container(
+                            content=ft.Row(
+                                [
+                                    ft.FilledButton(
+                                        text="Detalhes",
+                                        style=ft.ButtonStyle(
+                                            bgcolor=ft.Colors.ON_SURFACE_VARIANT,
+                                            color=ft.Colors.PRIMARY_CONTAINER,
+                                            shape=ft.RoundedRectangleBorder(radius=4),
+                                            padding=ft.Padding(40, 20, 40, 20),
+                                        ),
+                                        on_click=gerar_callback_ir_tela(id_votacao),
+                                        width=200,
+                                    ),
+                                ]
+                            ),
+                            expand=True,
+                            padding=10,
+                        ),
+                    ],
+                    alignment=ft.MainAxisAlignment.START,
+                    vertical_alignment=ft.CrossAxisAlignment.CENTER,
+                ),
+                border_radius=10,
+                padding=15,
+                width=1000,
+                alignment=ft.alignment.center,
+                margin=10,  # <-- Isso aqui separa visualmente os cartões
+                border=ft.border.all(1, ft.Colors.GREY_500),  # <-- Adiciona uma borda ao redor
+            )
+
+            cartoes_votacoes.append(cartao)
+
+        # Atualiza o container que exibe os cartões
+        cartao_votacao_atual.controls = cartoes_votacoes
+        page.update()
+        
+    
+    def ver_mais_fechado(e):
+        nonlocal limite_fechado, cartoes_votacoes_fechadas
+
+        limite_fechado += 3
+
+        novos_dados = requests.get(f"https://backend-api-urna.onrender.com/votacoes/closed?limit={limite_fechado}&offset=0").json()
+
+        cartoes_votacoes_fechadas.clear()
+
+        for votacao in novos_dados:
+            id_votacao = votacao['id_votacao']  # Pega o ID da votação para usar no botão de detalhes
+            cartao = ft.Container(
+                content=ft.ResponsiveRow(
+                                [
+                                    ft.Container(
+                                        width=60,
+                                        height=60,
+                                        bgcolor=ft.Colors.GREY_300,
+                                    ),
+                                    ft.Container(
+                                        content=ft.Column(
+                                            [
+                                                ft.Text(f"{votacao['titulo']}", weight=ft.FontWeight.BOLD, size=20),
+                                                ft.Text(f"Período: {votacao['data_inicio']} até {votacao['data_fim']}."),
+                                                ft.Text(f"Descrição: {votacao['descricao']}"),
+                                            ]
+                                        ),
+                                        expand=True,
+                                        padding=10,
+                                    ),
+                                    ft.Container(
+                                        content=ft.Row(
+                                            [
+                                                ft.FilledButton(
+                                                    text="Detalhes",
+                                                    style=ft.ButtonStyle(
+                                                        bgcolor=ft.Colors.ON_SURFACE_VARIANT,
+                                                        color=ft.Colors.PRIMARY_CONTAINER,
+                                                        shape=ft.RoundedRectangleBorder(radius=4),
+                                                        padding=ft.Padding(40, 20, 40, 20),
+                                                    ),
+                                                    on_click=gerar_callback_ir_tela(id_votacao),
+                                                    width=200,
+                                                ),
+                                            ]
+                                        ),
+                                        expand=True,
+                                        padding=10,
+                                    ),
+                                ],
+                                alignment=ft.MainAxisAlignment.START,
+                                vertical_alignment=ft.CrossAxisAlignment.CENTER,
+                            ),
+                            border_radius=10,
+                            padding=15,
+                            width=1000,
+                            alignment=ft.alignment.center,
+                            margin=10,  # <-- Isso aqui separa visualmente os cartões
+                            border=ft.border.all(1, ft.Colors.GREY_500),  # <-- Adiciona uma borda ao redor
+                        )
+            
+            cartoes_votacoes_fechadas.append(cartao)
+
+            cartao_votacao_fechada.controls = cartoes_votacoes_fechadas
+
+            page.update()
 
 
     candidatos_aprovados_api = requests.get("https://backend-api-urna.onrender.com/candidaturas/aprovadas?limit=3&offset=0").json()
@@ -139,9 +277,9 @@ def dashboard(page: ft.Page):
 
     candidatos_pendentes_api = requests.get("https://backend-api-urna.onrender.com/candidaturas/pendentes?limit=3&offset=0").json()
 
-    votacoes_fechadas_api = requests.get("https://backend-api-urna.onrender.com/votacoes/closed?limit=3&offset=0").json()
+    votacoes_fechadas_api = requests.get(f"https://backend-api-urna.onrender.com/votacoes/closed?limit={limite_fechado}&offset=0").json()
 
-    votacoes_abertas_api = requests.get("https://backend-api-urna.onrender.com/votacoes/open?limit=3&offset=0").json()
+    votacoes_abertas_api = requests.get(f"https://backend-api-urna.onrender.com/votacoes/open?limit={limite_aberto}&offset=0").json()
 
 
 
@@ -357,7 +495,7 @@ def dashboard(page: ft.Page):
                                                 padding=ft.Padding(40, 40, 40, 40),  # aumenta o tamanho (deixa mais quadrado)
                                                 
                                             ),
-                                            on_click=lambda e: page.go("/criar_votacao"),
+                                            on_click=lambda e: print("Baixar CSV clicado!"),
                                             width=1000,
                                         )
     
@@ -372,7 +510,20 @@ def dashboard(page: ft.Page):
                                                 padding=ft.Padding(20, 20, 20, 20),  # aumenta o tamanho (deixa mais quadrado)
                                                 
                                             ),
-                                            on_click=lambda e: print("Baixar CSV clicado!"),
+                                            on_click=ver_mais_aberto,
+                                            width=230,
+                                        )
+    
+    botao_ver_mais_fechado = ft.FilledButton(
+                                        text="Ver Mais",
+                                            style=ft.ButtonStyle(
+                                                bgcolor=ft.Colors.ON_SURFACE_VARIANT,  # se adapta bem a temas claros e escuros
+                                                color=ft.Colors.PRIMARY_CONTAINER,
+                                                shape=ft.RoundedRectangleBorder(radius=4),  # cantos levemente arredondados (mude para 0 se quiser 100% quadrado)
+                                                padding=ft.Padding(20, 20, 20, 20),  # aumenta o tamanho (deixa mais quadrado)
+                                                
+                                            ),
+                                            on_click=ver_mais_fechado,
                                             width=230,
                                         )
 
@@ -656,7 +807,7 @@ def dashboard(page: ft.Page):
                 titulo_votacoes_fechadas,
                 espacamento2,  # Espaçamento entre seções
                 cartao_votacao_fechada,
-                botao_ver_mais,
+                botao_ver_mais_fechado,
             ]
 
     if user_type == "admin":
