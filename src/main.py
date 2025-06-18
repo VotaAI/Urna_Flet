@@ -1,6 +1,6 @@
 import flet as ft
 from tela_inicio import tela_inicial
-from dashboard import dashboard
+from dashboard import dashboard   
 from tela_downloads import tela_downloads
 from login import tela_login
 from cadastro import tela_cadastro
