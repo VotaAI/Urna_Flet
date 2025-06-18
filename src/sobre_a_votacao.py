@@ -85,6 +85,19 @@ def tela_sobre_votacao(page: ft.Page):
 
 
     def criar_botao_votar(id_opcao):
+        def votar(e):
+            if detalhes_votacao["status"] == "aberta":
+                if isinstance(votos_resultados, list):
+                    for opcao in votos_resultados:
+                        if opcao["id_opcao"] == id_opcao:
+                            opcao["total_votos"] += 1
+                            print(f"Voto computado para {id_opcao}. Total agora: {opcao['total_votos']}")
+                            break
+                else:
+                    print(f"Erro: votos_resultados não é uma lista. Valor recebido: {votos_resultados}")
+            else:
+                print("Não é possível votar nessa votação.")
+
         btn = ft.FilledButton(
             text="Votar",
             style=ft.ButtonStyle(
@@ -94,7 +107,7 @@ def tela_sobre_votacao(page: ft.Page):
                 padding=ft.Padding(10, 10, 10, 10),  # aumenta o tamanho (deixa mais quadrado)
                 
             ),
-            on_click=lambda e: print("Baixar CSV clicado!"),
+            on_click=votar,
             width=120,
         )
         return btn
