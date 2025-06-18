@@ -5,6 +5,7 @@ from datetime import datetime
 informacoes_candidatos = []
 
 def tela_criar_votacao(page: ft.Page):
+    informacoes_candidatos = []
     page.title = "Criar votação"
     page.bgcolor = "#303030"
     page.scroll=True
