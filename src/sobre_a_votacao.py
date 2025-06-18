@@ -1,5 +1,9 @@
 import flet as ft
 import requests
+# from grafico_votacao import grafico
+import matplotlib.pyplot as plt
+import io
+import base64
 from datetime import datetime
 
 def tela_sobre_votacao(page: ft.Page):
@@ -23,7 +27,9 @@ def tela_sobre_votacao(page: ft.Page):
         ],
     )
 
-    id_votacao = page.client_storage.get("id_votacao")
+    id_votacao = int(page.client_storage.get("id_votacao"))
+    
+    print(id_votacao)
     if id_votacao is None:
         page.go("/votacoes")
         return
@@ -39,6 +45,40 @@ def tela_sobre_votacao(page: ft.Page):
     vencedor_titulo = ''
     vencedor_votos = 0
     vencedor_votos_str = '0 Votos'
+
+    def grafico(id_votacao):
+        votos_resultados = requests.get(f"https://backend-api-urna.onrender.com/votacoes/{id_votacao}/votos").json()
+
+        if isinstance(votos_resultados, str):
+            return ft.Text("Não há votos registrados ou a votação não existe.", color=ft.Colors.RED)
+
+        if not isinstance(votos_resultados, list):
+            return ft.Text("Erro inesperado nos dados de votos.", color=ft.Colors.RED)
+
+        if len(votos_resultados) == 0:
+            return ft.Text("Nenhum voto registrado.", color=ft.Colors.RED)
+
+        # Ordena os resultados pelos votos (do maior para o menor)
+        top_3 = sorted(votos_resultados, key=lambda x: x["total_votos"], reverse=True)[:3]
+
+        nome_candidato = [opcao['id_opcao'] for opcao in top_3]
+        quantidade_votos = [opcao['total_votos'] for opcao in top_3]
+
+        # Gerar gráfico
+        plt.figure(figsize=(10, 6))
+        plt.bar(nome_candidato, quantidade_votos, color='red')
+        plt.xticks(rotation=0)
+        plt.ylabel('Votos')
+        plt.xlabel('Candidatos')
+        plt.title('Resultado da Votação')
+
+        buffer = io.BytesIO()
+        plt.savefig(buffer, format='png')
+        buffer.seek(0)
+        image_base64 = base64.b64encode(buffer.read()).decode()
+
+        return ft.Image(src_base64=image_base64, width=600, height=400)
+
 
     def encontrar_votos(titulo):
         nonlocal vencedor_titulo
@@ -127,6 +167,13 @@ def tela_sobre_votacao(page: ft.Page):
 
 
 
+    grafico_tela = ft.Container()
+
+    if detalhes_votacao["status"] == "fechada":
+        if isinstance(votos_resultados, list):
+            grafico_tela = ft.Container(content=ft.Row([grafico(id_votacao)]))
+        else:
+            grafico_tela = ft.Container(content=ft.Text("Gráfico indisponível: votação inválida ou sem votos.", color=ft.Colors.RED))
 
     if votos_resultados == "Votação e/ou opções não encontradas":
         tabela_com_votos = ft.Text(
@@ -255,9 +302,10 @@ def tela_sobre_votacao(page: ft.Page):
                     padding=20,
                     bgcolor=ft.Colors.SURFACE,
                     alignment=ft.alignment.center,
-                    col={"xs": 12, "md": 12, "lg": 10},
+                    col={"xs": 6, "md": 6, "lg": 6},
                 ),
                 ft.Container(col={"lg": 1,"md": 3}),
+                ft.Container(content=ft.Column([grafico_tela]), col={"xs": 4, "md": 4, "lg": 4})
             ],
             vertical_alignment=ft.CrossAxisAlignment.CENTER,
         )
@@ -315,7 +363,7 @@ def tela_sobre_votacao(page: ft.Page):
             title=ft.Text("VotaAÍ"),
             center_title=False,
             actions=[
-                ft.TextButton(text="Tela Inicial", on_click=lambda e: page.go("/dashboard_usuario")),
+                ft.TextButton(text="Tela Inicial", on_click=lambda e: page.go("/votacoes")),
             ],
         ),
         controls=[

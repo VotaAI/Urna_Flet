@@ -4,6 +4,7 @@ from dashboard import dashboard
 from tela_downloads import tela_downloads
 from login import tela_login
 from cadastro import tela_cadastro
+# from grafico_votacao import grafico     
 
 # se possivel, melhorar essa logica do uso do token e user_type
 
@@ -11,9 +12,9 @@ def main(page: ft.Page):
     def route_change(route):
         page.views.clear()
 
-        rota = page.route
+        rota = page.route    
         token = page.client_storage.get("token")
-        user_type = page.client_storage.get("user_type")
+        user_type = page.client_storage.get("user_type")  
 
         if rota == "/":
             page.views.append(tela_inicial(page))
@@ -41,4 +42,4 @@ def main(page: ft.Page):
     page.on_route_change = route_change
     page.go(page.route)
 
-ft.app(target=main)
+ft.app(target=main)   
